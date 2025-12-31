@@ -52,7 +52,12 @@ if(APPLE)
         MACOSX_BUNDLE_BUNDLE_VERSION "1.0.0"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
         MACOSX_BUNDLE_INFO_STRING "A Raylib Game"
+        MACOSX_BUNDLE_LONG_VERSION_STRING "1.0.0"
+        MACOSX_BUNDLE_EXECUTABLE_NAME "game"
     )
+    
+    # Set deployment target for compatibility
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "macOS minimum deployment target")
 endif()
 
 # Copy assets to build directory (for both regular and bundle builds)
