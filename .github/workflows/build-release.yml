@@ -48,6 +48,14 @@ jobs:
       - name: Build project
         run: cmake --build build --config Release
       
+      - name: Copy assets to build directory
+        shell: bash
+        run: |
+          if [ -d "assets" ]; then
+            cp -r assets build/
+            echo "Assets copied to build directory"
+          fi
+      
       - name: Locate executable
         id: locate
         shell: bash
