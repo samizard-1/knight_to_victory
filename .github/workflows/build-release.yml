@@ -1,0 +1,78 @@
+name: Build Release Executables
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            artifact_name: game.exe
+            asset_name: game-windows.exe
+          - os: macos-latest
+            artifact_name: game
+            asset_name: game-macos
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Clone raylib
+        run: |
+          if [ ! -d "vendor/raylib" ]; then
+            mkdir -p vendor
+            git clone https://github.com/raysan5/raylib.git vendor/raylib
+          fi
+      
+      - name: Set up CMake
+        uses: cmake-build-action/cmake-build-action@v1
+        with:
+          cmake-version: '3.28'
+      
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install cmake pkg-config
+      
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          choco install cmake
+      
+      - name: Create build directory
+        run: mkdir -p build
+      
+      - name: Configure CMake
+        run: cmake -B build -S .
+      
+      - name: Build project
+        run: cmake --build build --config Release
+      
+      - name: Locate executable
+        id: locate
+        shell: bash
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            exe_path="$(find build -name 'game.exe' -type f | head -1)"
+          else
+            exe_path="$(find build -name 'game' -type f ! -name '*.a' ! -name '*.o' | head -1)"
+          fi
+          echo "exe_path=$exe_path" >> $GITHUB_OUTPUT
+          echo "Found executable at: $exe_path"
+      
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ steps.locate.outputs.exe_path }}
+          asset_name: ${{ matrix.asset_name }}
+          asset_content_type: application/octet-stream
