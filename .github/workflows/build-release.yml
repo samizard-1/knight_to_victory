@@ -197,35 +197,13 @@ jobs:
           echo "" >> README_MACOS.txt
           echo "TO SEE DEBUG OUTPUT:" >> README_MACOS.txt
           echo "Run from Terminal: ./game.app/Contents/MacOS/game" >> README_MACOS.txt
-          echo "Or double-click the 'run_with_console.command' script" >> README_MACOS.txt
-          echo "" >> README_MACOS.txt
-          echo "If you get warnings about run_with_console.command:" >> README_MACOS.txt
-          echo "- Right-click it and select 'Open' (same as with the app)" >> README_MACOS.txt
-          echo "- Or run in Terminal: xattr -d com.apple.quarantine run_with_console.command" >> README_MACOS.txt
-          
-          # Create a script to run the game with console output visible
-          echo '#!/bin/bash' > run_with_console.command
-          echo 'cd "$(dirname "$0")"' >> run_with_console.command
-          echo 'echo "Starting Raylib Game with console output..."' >> run_with_console.command
-          echo 'echo "Close this window to quit the game."' >> run_with_console.command
-          echo 'echo "==========================================="' >> run_with_console.command
-          echo './game.app/Contents/MacOS/game' >> run_with_console.command
-          echo 'echo ""' >> run_with_console.command
-          echo 'echo "Game has exited. Press any key to close this window."' >> run_with_console.command
-          echo 'read -n 1' >> run_with_console.command
-          chmod +x run_with_console.command
-          
-          # Sign and remove quarantine from the console script
-          codesign --force --sign - run_with_console.command || echo "Could not sign console script, but continuing..."
-          xattr -cr run_with_console.command 2>/dev/null || echo "Could not clear console script attributes"
           
           # Create DMG with proper app bundle handling
           mkdir -p dmg_source
           # Use -P to preserve structure when copying app bundle
           cp -RP "$APP_PATH" dmg_source/
-          # Copy the README file and console script
+          # Copy the README file
           cp README_MACOS.txt dmg_source/
-          cp run_with_console.command dmg_source/
           
           # Verify copied bundle
           echo "Verifying copied bundle..."
@@ -235,10 +213,6 @@ jobs:
             # Sign the copied bundle as well
             codesign --force --deep --sign - "dmg_source/game.app" || echo "Code signing failed, but continuing..."
             xattr -cr "dmg_source/game.app" 2>/dev/null || echo "Could not clear extended attributes"
-            
-            # Also sign the console script in the DMG
-            codesign --force --sign - "dmg_source/run_with_console.command" || echo "Could not sign console script in DMG"
-            xattr -cr "dmg_source/run_with_console.command" 2>/dev/null || echo "Could not clear console script attributes in DMG"
             
             echo "Copied bundle is valid and signed"
           else
