@@ -53,10 +53,10 @@ jobs:
         shell: bash
         run: |
           echo "Contents of build directory:"
-          find build -type f -executable 2>/dev/null | head -30
+          find build -type f 2>/dev/null | grep -E '(game|app)' | head -30
           echo ""
-          echo "Looking for game executable:"
-          find build -name 'game*' -o -name '*game.app' 2>/dev/null | head -20
+          echo "All files in build root:"
+          ls -la build/ 2>/dev/null | head -20
       
       - name: Locate executable
         id: locate
