@@ -61,9 +61,20 @@ if(APPLE)
 endif()
 
 # Copy assets to build directory (for both regular and bundle builds)
-add_custom_command(TARGET game POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_CURRENT_SOURCE_DIR}/assets
-    $<IF:$<BOOL:${APPLE}>,$<TARGET_BUNDLE_CONTENT_DIR:game>,${CMAKE_BINARY_DIR}>/assets
-    COMMENT "Copying assets to build directory"
-)
+if(APPLE)
+    # For macOS bundles, copy to Contents/Resources
+    add_custom_command(TARGET game POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/assets
+        $<TARGET_BUNDLE_CONTENT_DIR:game>/Resources/assets
+        COMMENT "Copying assets to macOS bundle Resources"
+    )
+else()
+    # For other platforms, copy next to the executable
+    add_custom_command(TARGET game POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/assets
+        ${CMAKE_BINARY_DIR}/assets
+        COMMENT "Copying assets to build directory"
+    )
+endif()
