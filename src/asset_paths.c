@@ -39,7 +39,21 @@ void init_asset_paths(void)
     }
     strcpy(executable_path, resolved_path);
 
-    // Find the last slash
+    // In a macOS app bundle, the executable is at:
+    // /path/to/game.app/Contents/MacOS/game
+    // We want: /path/to/game.app/Contents/Resources/assets
+
+    // Check if we're in a bundle by looking for Contents/MacOS in the path
+    char *bundle_marker = strstr(executable_path, "/Contents/MacOS/");
+    if (bundle_marker != NULL)
+    {
+        // We're in a bundle - truncate at Contents and use Resources/assets
+        *bundle_marker = '\0';
+        snprintf(asset_base_path, sizeof(asset_base_path), "%s/Contents/Resources/assets", executable_path);
+        return;
+    }
+
+    // Not in a bundle - find the last slash and look for assets next to the executable
     char *last_slash = strrchr(executable_path, '/');
     if (last_slash)
         *last_slash = '\0';

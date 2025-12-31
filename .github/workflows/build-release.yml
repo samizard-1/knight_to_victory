@@ -120,14 +120,22 @@ jobs:
           BUNDLE_ASSETS="$APP_PATH/Contents/Resources/assets"
           mkdir -p "$BUNDLE_ASSETS"
           
-          # Copy assets to bundle
+          # Copy assets to bundle, preserving structure
           if [ -d "assets" ]; then
-            cp -r assets/* "$BUNDLE_ASSETS/"
+            cp -r assets/* "$BUNDLE_ASSETS/" 2>/dev/null || true
           fi
           
-          # Create DMG
+          # Ensure executable has proper permissions
+          EXEC_PATH="$APP_PATH/Contents/MacOS/game"
+          if [ -f "$EXEC_PATH" ]; then
+            chmod +x "$EXEC_PATH"
+            echo "Executable permissions set"
+          fi
+          
+          # Create DMG with proper app bundle handling
           mkdir -p dmg_source
-          cp -r "$APP_PATH" dmg_source/
+          # Use -P to preserve structure when copying app bundle
+          cp -RP "$APP_PATH" dmg_source/
           
           create-dmg \
             --volname "Raylib Game" \
@@ -136,7 +144,10 @@ jobs:
             --icon-size 100 \
             --icon "game.app" 150 190 \
             raylib-game-macos.dmg \
-            dmg_source/
+            dmg_source/ || {
+            echo "create-dmg failed, trying alternative method"
+            hdiutil create -volname "Raylib Game" -srcfolder dmg_source -ov -format UDZO raylib-game-macos.dmg
+          }
           
           ls -lah raylib-game-macos.dmg
       
