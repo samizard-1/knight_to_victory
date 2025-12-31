@@ -68,9 +68,12 @@ jobs:
         run: |
           mkdir -p release_package
           cp "${{ steps.locate.outputs.exe_path }}" release_package/
-          cp -r build/assets release_package/
+          # Copy assets from source directory
+          if [ -d "assets" ]; then
+            cp -r assets release_package/
+          fi
           cd release_package
-          powershell -Command "Compress-Archive -Path *, assets -DestinationPath ../raylib-game-windows.zip"
+          powershell -Command "Compress-Archive -Path * -DestinationPath ../raylib-game-windows.zip"
           cd ..
           ls -la *.zip
       
@@ -80,7 +83,10 @@ jobs:
         run: |
           mkdir -p release_package
           cp "${{ steps.locate.outputs.exe_path }}" release_package/
-          cp -r build/assets release_package/
+          # Copy assets from source directory
+          if [ -d "assets" ]; then
+            cp -r assets release_package/
+          fi
           cd release_package
           zip -r ../raylib-game-macos.zip . -x "*.o" "*.a"
           cd ..
