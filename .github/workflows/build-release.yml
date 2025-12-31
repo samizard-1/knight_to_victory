@@ -31,11 +31,6 @@ jobs:
             git clone https://github.com/raysan5/raylib.git vendor/raylib
           fi
       
-      - name: Set up CMake
-        uses: cmake-build-action/cmake-build-action@v1
-        with:
-          cmake-version: '3.28'
-      
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
         run: |
@@ -44,7 +39,7 @@ jobs:
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
         run: |
-          choco install cmake
+          choco install cmake -y
       
       - name: Create build directory
         run: mkdir -p build
