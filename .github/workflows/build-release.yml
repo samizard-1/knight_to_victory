@@ -140,29 +140,27 @@ jobs:
           find "$APP_PATH" -type f | head -20
           
           # Create a README for users about potential security warnings
-          cat > README_MACOS.txt << 'EOF'
-RUNNING THE GAME ON MACOS
-========================
-
-If you get a security warning when trying to run the game:
-
-Method 1: Right-click the app and select "Open"
-- Right-click on the game.app file
-- Select "Open" from the context menu
-- Click "Open" in the security dialog
-
-Method 2: Remove quarantine (Terminal)
-- Open Terminal
-- Navigate to where you extracted the app
-- Run: xattr -d com.apple.quarantine game.app
-- Run: sudo xattr -cr game.app
-
-Method 3: System Preferences
-- Go to System Preferences > Security & Privacy
-- Click "Open Anyway" if the app appears in the General tab
-
-The app is safe to run but unsigned, which triggers macOS security warnings.
-EOF
+          echo "RUNNING THE GAME ON MACOS" > README_MACOS.txt
+          echo "========================" >> README_MACOS.txt
+          echo "" >> README_MACOS.txt
+          echo "If you get a security warning when trying to run the game:" >> README_MACOS.txt
+          echo "" >> README_MACOS.txt
+          echo "Method 1: Right-click the app and select \"Open\"" >> README_MACOS.txt
+          echo "- Right-click on the game.app file" >> README_MACOS.txt
+          echo "- Select \"Open\" from the context menu" >> README_MACOS.txt
+          echo "- Click \"Open\" in the security dialog" >> README_MACOS.txt
+          echo "" >> README_MACOS.txt
+          echo "Method 2: Remove quarantine (Terminal)" >> README_MACOS.txt
+          echo "- Open Terminal" >> README_MACOS.txt
+          echo "- Navigate to where you extracted the app" >> README_MACOS.txt
+          echo "- Run: xattr -d com.apple.quarantine game.app" >> README_MACOS.txt
+          echo "- Run: sudo xattr -cr game.app" >> README_MACOS.txt
+          echo "" >> README_MACOS.txt
+          echo "Method 3: System Preferences" >> README_MACOS.txt
+          echo "- Go to System Preferences > Security & Privacy" >> README_MACOS.txt
+          echo "- Click \"Open Anyway\" if the app appears in the General tab" >> README_MACOS.txt
+          echo "" >> README_MACOS.txt
+          echo "The app is safe to run but unsigned, which triggers macOS security warnings." >> README_MACOS.txt
           
           # Create DMG with proper app bundle handling
           mkdir -p dmg_source
