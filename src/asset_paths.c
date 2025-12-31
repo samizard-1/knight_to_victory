@@ -5,6 +5,9 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#ifndef PATH_MAX
+#define PATH_MAX MAX_PATH
+#endif
 #elif defined(__APPLE__)
 #include <mach-o/dyld.h>
 #include <unistd.h>
