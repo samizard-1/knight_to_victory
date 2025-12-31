@@ -61,7 +61,11 @@ jobs:
           echo "Found executable at: $exe_path"
       
       - name: Upload Release Asset
-        uses: softprops/action-gh-release@v1
+        uses: actions/upload-release-asset@v1
         with:
-          files: ${{ steps.locate.outputs.exe_path }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ steps.locate.outputs.exe_path }}
+          asset_name: ${{ matrix.asset_name }}
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
