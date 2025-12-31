@@ -27,14 +27,14 @@ Player player_create(float x, float y)
     p.height = (float)p.texture.height * p.scale;
 
     // Load dead texture (optional - create a simple fallback if file doesn't exist)
-    p.dead_texture = LoadTexture("../assets/dead_character.png");
+    p.dead_texture = LoadTexture("assets/dead_character.png");
 
     // Load heart textures
-    p.filled_heart_texture = LoadTexture("../assets/filled_heart.png");
-    p.empty_heart_texture = LoadTexture("../assets/empty_heart.png");
+    p.filled_heart_texture = LoadTexture("assets/filled_heart.png");
+    p.empty_heart_texture = LoadTexture("assets/empty_heart.png");
 
     // Load fireball texture for inventory display
-    p.fireball_texture = LoadTexture("../assets/fireball.png");
+    p.fireball_texture = LoadTexture("assets/fireball.png");
 
     // Initialize health
     p.hearts = INITIAL_HEARTS;
