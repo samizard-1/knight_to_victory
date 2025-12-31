@@ -18,6 +18,7 @@ add_executable(game
     src/monster.c
     src/projectile.c
     src/pickup.c
+    src/asset_paths.c
     src/level1.c
     src/level2.c
     src/level3.c
@@ -42,11 +43,22 @@ if(APPLE)
     target_link_libraries(game "-framework IOKit")
     target_link_libraries(game "-framework Cocoa")
     target_link_libraries(game "-framework OpenGL")
+    
+    # Create macOS app bundle
+    set_target_properties(game PROPERTIES
+        MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_GUI_IDENTIFIER "com.example.raylib-game"
+        MACOSX_BUNDLE_BUNDLE_NAME "Raylib Game"
+        MACOSX_BUNDLE_BUNDLE_VERSION "1.0.0"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
+        MACOSX_BUNDLE_INFO_STRING "A Raylib Game"
+    )
 endif()
-# Copy assets to build directory
+
+# Copy assets to build directory (for both regular and bundle builds)
 add_custom_command(TARGET game POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_CURRENT_SOURCE_DIR}/assets
-    $<TARGET_FILE_DIR:game>/assets
+    $<IF:$<BOOL:${APPLE}>,$<TARGET_BUNDLE_CONTENT_DIR:game>,${CMAKE_BINARY_DIR}>/assets
     COMMENT "Copying assets to build directory"
 )

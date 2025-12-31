@@ -16,7 +16,7 @@ jobs:
           - os: macos-latest
             artifact_name: game
             asset_name: raylib-game-macos
-            file_extension: .zip
+            file_extension: .dmg
     
     runs-on: ${{ matrix.os }}
     
@@ -29,12 +29,11 @@ jobs:
         run: |
           mkdir -p vendor
           git clone --depth 1 https://github.com/raysan5/raylib.git vendor/raylib
-          ls -la vendor/raylib
       
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
         run: |
-          brew install cmake pkg-config
+          brew install cmake pkg-config create-dmg
       
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
@@ -56,6 +55,13 @@ jobs:
         run: |
           if [ "${{ runner.os }}" = "Windows" ]; then
             exe_path="$(find build -name 'game.exe' -type f | head -1)"
+          elif [ "${{ runner.os }}" = "macOS" ]; then
+            # Look for the app bundle first
+            app_path="$(find build -name 'game.app' -type d | head -1)"
+            if [ -n "$app_path" ]; then
+              echo "app_path=$app_path" >> $GITHUB_OUTPUT
+            fi
+            exe_path="$(find build -name 'game' -type f ! -name '*.a' ! -name '*.o' | grep -v '.app' | head -1)"
           else
             exe_path="$(find build -name 'game' -type f ! -name '*.a' ! -name '*.o' | head -1)"
           fi
@@ -75,29 +81,84 @@ jobs:
           cd release_package
           powershell -Command "Compress-Archive -Path * -DestinationPath ../raylib-game-windows.zip"
           cd ..
-          ls -la *.zip
+          ls -lah raylib-game-windows.zip
       
-      - name: Package Release (macOS)
-        if: runner.os == 'macOS'
+      - name: Package Release (macOS) - App Bundle
+        if: runner.os == 'macOS' && steps.locate.outputs.app_path != ''
+        shell: bash
+        run: |
+          APP_PATH="${{ steps.locate.outputs.app_path }}"
+          BUNDLE_ASSETS="$APP_PATH/Contents/Resources/assets"
+          mkdir -p "$BUNDLE_ASSETS"
+          
+          # Copy assets to bundle
+          if [ -d "assets" ]; then
+            cp -r assets/* "$BUNDLE_ASSETS/"
+          fi
+          
+          # Create DMG
+          mkdir -p dmg_source
+          cp -r "$APP_PATH" dmg_source/
+          
+          create-dmg \
+            --volname "Raylib Game" \
+            --window-pos 200 120 \
+            --window-size 600 400 \
+            --icon-size 100 \
+            --icon "game.app" 150 190 \
+            raylib-game-macos.dmg \
+            dmg_source/
+          
+          ls -lah raylib-game-macos.dmg
+      
+      - name: Package Release (macOS) - Fallback
+        if: runner.os == 'macOS' && steps.locate.outputs.app_path == ''
         shell: bash
         run: |
           mkdir -p release_package
           cp "${{ steps.locate.outputs.exe_path }}" release_package/
+          chmod +x release_package/game
+          
           # Copy assets from source directory
           if [ -d "assets" ]; then
             cp -r assets release_package/
           fi
+          
+          # Create a ZIP as fallback
           cd release_package
-          zip -r ../raylib-game-macos.zip . -x "*.o" "*.a"
+          zip -r ../raylib-game-macos-app.zip . -x "*.o" "*.a"
           cd ..
-          ls -la *.zip
+          ls -lah raylib-game-macos-app.zip
       
-      - name: Upload Release Asset
+      - name: Upload Release Asset (macOS DMG)
+        if: runner.os == 'macOS' && steps.locate.outputs.app_path != ''
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./raylib-game-${{ runner.os == 'Windows' && 'windows' || 'macos' }}.zip
-          asset_name: ${{ matrix.asset_name }}.zip
+          asset_path: ./raylib-game-macos.dmg
+          asset_name: raylib-game-macos.dmg
+          asset_content_type: application/x-apple-diskimage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload Release Asset (macOS Fallback ZIP)
+        if: runner.os == 'macOS' && steps.locate.outputs.app_path == ''
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./raylib-game-macos-app.zip
+          asset_name: raylib-game-macos-app.zip
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload Release Asset (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./raylib-game-windows.zip
+          asset_name: raylib-game-windows.zip
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
