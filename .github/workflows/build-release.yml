@@ -49,24 +49,45 @@ jobs:
       - name: Build project
         run: cmake --build build --config Release
       
+      - name: Debug - List build directory
+        shell: bash
+        run: |
+          echo "Contents of build directory:"
+          find build -type f -executable 2>/dev/null | head -30
+          echo ""
+          echo "Looking for game executable:"
+          find build -name 'game*' -o -name '*game.app' 2>/dev/null | head -20
+      
       - name: Locate executable
         id: locate
         shell: bash
         run: |
+          set +e  # Disable exit on error for this step
+          
           if [ "${{ runner.os }}" = "Windows" ]; then
-            exe_path="$(find build -name 'game.exe' -type f | head -1)"
+            exe_path="$(find build -name 'game.exe' -type f 2>/dev/null | head -1)"
           elif [ "${{ runner.os }}" = "macOS" ]; then
             # Look for the app bundle first
-            app_path="$(find build -name 'game.app' -type d | head -1)"
+            app_path="$(find build -name 'game.app' -type d 2>/dev/null | head -1)"
             if [ -n "$app_path" ]; then
               echo "app_path=$app_path" >> $GITHUB_OUTPUT
+              echo "Found app bundle at: $app_path"
             fi
-            exe_path="$(find build -name 'game' -type f ! -name '*.a' ! -name '*.o' | grep -v '.app' | head -1)"
+            exe_path="$(find build -name 'game' -type f ! -name '*.a' ! -name '*.o' 2>/dev/null | grep -v '.app' | head -1)"
           else
-            exe_path="$(find build -name 'game' -type f ! -name '*.a' ! -name '*.o' | head -1)"
+            exe_path="$(find build -name 'game' -type f ! -name '*.a' ! -name '*.o' 2>/dev/null | head -1)"
           fi
+          
+          if [ -z "$exe_path" ]; then
+            echo "ERROR: Could not locate executable"
+            echo "Contents of build directory:"
+            find build -type f -executable 2>/dev/null | head -20
+            exit 1
+          fi
+          
           echo "exe_path=$exe_path" >> $GITHUB_OUTPUT
           echo "Found executable at: $exe_path"
+          set -e  # Re-enable exit on error
       
       - name: Package Release (Windows)
         if: runner.os == 'Windows'
