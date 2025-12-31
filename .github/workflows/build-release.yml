@@ -11,10 +11,12 @@ jobs:
         include:
           - os: windows-latest
             artifact_name: game.exe
-            asset_name: game-windows.exe
+            asset_name: raylib-game-windows
+            file_extension: .zip
           - os: macos-latest
             artifact_name: game
-            asset_name: game-macos
+            asset_name: raylib-game-macos
+            file_extension: .zip
     
     runs-on: ${{ matrix.os }}
     
@@ -60,12 +62,36 @@ jobs:
           echo "exe_path=$exe_path" >> $GITHUB_OUTPUT
           echo "Found executable at: $exe_path"
       
+      - name: Package Release (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          mkdir -p release_package
+          cp "${{ steps.locate.outputs.exe_path }}" release_package/
+          cp -r build/assets release_package/
+          cd release_package
+          powershell -Command "Compress-Archive -Path *, assets -DestinationPath ../raylib-game-windows.zip"
+          cd ..
+          ls -la *.zip
+      
+      - name: Package Release (macOS)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          mkdir -p release_package
+          cp "${{ steps.locate.outputs.exe_path }}" release_package/
+          cp -r build/assets release_package/
+          cd release_package
+          zip -r ../raylib-game-macos.zip . -x "*.o" "*.a"
+          cd ..
+          ls -la *.zip
+      
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ steps.locate.outputs.exe_path }}
-          asset_name: ${{ matrix.asset_name }}
-          asset_content_type: application/octet-stream
+          asset_path: ./raylib-game-${{ runner.os == 'Windows' && 'windows' || 'macos' }}.zip
+          asset_name: ${{ matrix.asset_name }}.zip
+          asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
