@@ -72,16 +72,24 @@ jobs:
             if [ -n "$app_path" ]; then
               echo "app_path=$app_path" >> $GITHUB_OUTPUT
               echo "Found app bundle at: $app_path"
+              # The executable is inside the bundle at Contents/MacOS/game
+              exe_path="$app_path/Contents/MacOS/game"
+              if [ ! -f "$exe_path" ]; then
+                echo "ERROR: Executable not found at expected location: $exe_path"
+                exit 1
+              fi
+            else
+              # Fallback: look for plain executable
+              exe_path="$(find build -name 'game' -type f 2>/dev/null | grep -v '.app' | head -1)"
             fi
-            exe_path="$(find build -name 'game' -type f ! -name '*.a' ! -name '*.o' 2>/dev/null | grep -v '.app' | head -1)"
           else
-            exe_path="$(find build -name 'game' -type f ! -name '*.a' ! -name '*.o' 2>/dev/null | head -1)"
+            exe_path="$(find build -name 'game' -type f 2>/dev/null | grep -v '.app' | head -1)"
           fi
           
           if [ -z "$exe_path" ]; then
             echo "ERROR: Could not locate executable"
             echo "Contents of build directory:"
-            find build -type f -executable 2>/dev/null | head -20
+            find build -type f 2>/dev/null | grep -E '(game|app)' | head -30
             exit 1
           fi
           
