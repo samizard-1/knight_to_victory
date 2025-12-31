@@ -21,14 +21,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     
     steps:
-      - name: Checkout code
+      - name: Checkout code with submodules
         uses: actions/checkout@v4
-      
-      - name: Clone raylib
-        shell: bash
-        run: |
-          mkdir -p vendor
-          git clone --depth 1 https://github.com/raysan5/raylib.git vendor/raylib
+        with:
+          submodules: recursive
       
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
