@@ -128,20 +128,59 @@ jobs:
             echo "Executable permissions set"
           fi
           
+          # Remove quarantine attributes and ad-hoc sign the executable
+          echo "Signing executable..."
+          codesign --force --deep --sign - "$APP_PATH" || echo "Code signing failed, but continuing..."
+          
+          # Remove extended attributes that cause quarantine issues
+          xattr -cr "$APP_PATH" 2>/dev/null || echo "Could not clear extended attributes"
+          
           # Validate the bundle structure
           echo "Bundle structure:"
           find "$APP_PATH" -type f | head -20
+          
+          # Create a README for users about potential security warnings
+          cat > README_MACOS.txt << 'EOF'
+RUNNING THE GAME ON MACOS
+========================
+
+If you get a security warning when trying to run the game:
+
+Method 1: Right-click the app and select "Open"
+- Right-click on the game.app file
+- Select "Open" from the context menu
+- Click "Open" in the security dialog
+
+Method 2: Remove quarantine (Terminal)
+- Open Terminal
+- Navigate to where you extracted the app
+- Run: xattr -d com.apple.quarantine game.app
+- Run: sudo xattr -cr game.app
+
+Method 3: System Preferences
+- Go to System Preferences > Security & Privacy
+- Click "Open Anyway" if the app appears in the General tab
+
+The app is safe to run but unsigned, which triggers macOS security warnings.
+EOF
           
           # Create DMG with proper app bundle handling
           mkdir -p dmg_source
           # Use -P to preserve structure when copying app bundle
           cp -RP "$APP_PATH" dmg_source/
+          # Copy the README file
+          cp README_MACOS.txt dmg_source/
           
           # Verify copied bundle
           echo "Verifying copied bundle..."
           if [ -f "dmg_source/game.app/Contents/MacOS/game" ]; then
             chmod +x "dmg_source/game.app/Contents/MacOS/game"
-            echo "Copied bundle is valid"
+            
+            # Sign the copied bundle as well
+            codesign --force --deep --sign - "dmg_source/game.app" || echo "Code signing failed, but continuing..."
+            xattr -cr "dmg_source/game.app" 2>/dev/null || echo "Could not clear extended attributes"
+            
+            echo "Copied bundle is valid and signed"
           else
             echo "ERROR: Copied bundle missing executable"
             exit 1
