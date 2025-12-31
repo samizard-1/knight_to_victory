@@ -1,0 +1,49 @@
+# Build directories
+build/
+cmake_build_debug/
+cmake_build_release/
+out/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CPackConfig.cmake
+CPackSourceConfig.cmake
+Makefile
+
+# Compiled binaries and libraries
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+
+# IDE and editor files
+.vscode/
+.idea/
+*.xcodeproj/
+*.xcworkspace/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Compiler output
+compile_commands.json
+.cmake/
+
+# Dependencies (if not intentionally included)
+# Uncomment if vendor directory should be ignored:
+# vendor/
+
+# System files
+*.log
+.directory
+
+# Temporary files
+*.tmp
+*.temp
