@@ -1,6 +1,7 @@
 #include "hazard.h"
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 HazardList hazard_list_create(int capacity)
 {
