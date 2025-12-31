@@ -46,7 +46,7 @@ Level level6_create(void)
         650.0f,            // patrol left boundary
         1100.0f,           // patrol right boundary
         170.0f,            // patrol speed
-        "assets/crab.png", // texture path
+        "crab.png", // texture path
         0.12f              // scale
     );
     monster_list_add(&level.monsters, crab1);
@@ -61,7 +61,7 @@ Level level6_create(void)
         1100.0f,           // patrol left boundary
         1900.0f,           // patrol right boundary
         160.0f,            // patrol speed
-        "assets/crab.png", // texture path
+        "crab.png", // texture path
         0.13f              // scale
     );
     monster_list_add(&level.monsters, crab2);
@@ -74,7 +74,7 @@ Level level6_create(void)
         1900.0f,           // patrol left boundary
         2300.0f,           // patrol right boundary
         170.0f,            // patrol speed
-        "assets/crab.png", // texture path
+        "crab.png", // texture path
         0.12f              // scale
     );
     monster_list_add(&level.monsters, crab3);
@@ -89,7 +89,7 @@ Level level6_create(void)
         2300.0f,           // patrol left boundary
         2700.0f,           // patrol right boundary
         160.0f,            // patrol speed
-        "assets/crab.png", // texture path
+        "crab.png", // texture path
         0.13f              // scale
     );
     monster_list_add(&level.monsters, crab4);
@@ -102,7 +102,7 @@ Level level6_create(void)
         800.0f,            // patrol left boundary
         2700.0f,           // patrol right boundary
         140.0f,            // patrol speed
-        "assets/crab.png", // texture path
+        "crab.png", // texture path
         0.19f              // scale
     );
     monster_list_add(&level.monsters, Crabono);
@@ -115,7 +115,7 @@ Level level6_create(void)
         1900.0f,           // patrol left boundary
         2700.0f,           // patrol right boundary
         170.0f,            // patrol speed
-        "assets/crab.png", // texture path
+        "crab.png", // texture path
         0.12f              // scale
     );
     monster_list_add(&level.monsters, crab5);
@@ -130,7 +130,7 @@ Level level6_create(void)
         800.0f,            // patrol left boundary
         1900.0f,           // patrol right boundary
         170.0f,            // patrol speed
-        "assets/crab.png", // texture path
+        "crab.png", // texture path
         0.13f              // scale
     );
     monster_list_add(&level.monsters, crab6);

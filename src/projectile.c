@@ -1,4 +1,5 @@
 #include "projectile.h"
+#include "asset_paths.h"
 #include <stdlib.h>
 #include <math.h>
 
@@ -25,7 +26,7 @@ Projectile projectile_create_fireball(Vector2 start_pos, Vector2 target_pos)
 
     p.width = 16.0f;
     p.height = 16.0f;
-    p.texture = LoadTexture("assets/fireball.png");
+    p.texture = LoadTexture(get_asset_path("fireball.png"));
     p.scale = 0.04f;
     p.type = PROJECTILE_FIREBALL;
     p.active = true;

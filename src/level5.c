@@ -46,7 +46,7 @@ Level level5_create(void)
         300.0f,                    // patrol left boundary
         700.0f,                    // patrol right boundary
         80.0f,                     // patrol speed
-        "assets/monster_slug.png", // texture path
+        "monster_slug.png", // texture path
         0.1f                       // scale
     );
     monster_list_add(&level.monsters, slug);
@@ -60,7 +60,7 @@ Level level5_create(void)
         100.0f,           // patrol left boundary
         600.0f,           // patrol right boundary
         150.0f,           // patrol speed
-        "assets/bat.png", // texture path
+        "bat.png", // texture path
         0.08f             // scale
     );
     Monster crab = monster_create(
@@ -72,7 +72,7 @@ Level level5_create(void)
         900.0f,            // patrol left boundary
         1700.0f,           // patrol right boundary
         150.0f,            // patrol speed
-        "assets/crab.png", // texture path
+        "crab.png", // texture path
         0.1f               // scale
     );
     Monster bat3 = monster_create(
@@ -84,7 +84,7 @@ Level level5_create(void)
         1000.0f,          // patrol left boundary
         1600.0f,          // patrol right boundary
         150.0f,           // patrol speed
-        "assets/bat.png", // texture path
+        "bat.png", // texture path
         0.35f             // scale
     );
     Monster slug3 = monster_create(
@@ -96,7 +96,7 @@ Level level5_create(void)
         1600.0f,                   // patrol left boundary
         2000.0f,                   // patrol right boundary
         100.0f,                    // patrol speed
-        "assets/monster_slug.png", // texture path
+        "monster_slug.png", // texture path
         0.07f                      // scale
     );
     Monster bat4 = monster_create(
@@ -108,7 +108,7 @@ Level level5_create(void)
         1200.0f,          // patrol left boundary
         1800.0f,          // patrol right boundary
         120.0f,           // patrol speed
-        "assets/bat.png", // texture path
+        "bat.png", // texture path
         0.08f             // scale
     );
     Monster slug4 = monster_create(
@@ -120,7 +120,7 @@ Level level5_create(void)
         800.0f,                    // patrol left boundary
         1100.0f,                   // patrol right boundary
         90.0f,                     // patrol speed
-        "assets/monster_slug.png", // texture path
+        "monster_slug.png", // texture path
         0.09f                      // scale
     );
     Monster bat5 = monster_create(
@@ -132,7 +132,7 @@ Level level5_create(void)
         1100.0f,          // patrol left boundary
         1900.0f,          // patrol right boundary
         110.0f,           // patrol speed
-        "assets/bat.png", // texture path
+        "bat.png", // texture path
         0.06f             // scale
     );
     monster_list_add(&level.monsters, bat2);

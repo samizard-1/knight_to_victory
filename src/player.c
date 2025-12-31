@@ -1,6 +1,7 @@
 #include "player.h"
 #include "hazard.h"
 #include "config.h"
+#include "asset_paths.h"
 #include <stddef.h>
 
 Player player_create(float x, float y)
@@ -13,28 +14,28 @@ Player player_create(float x, float y)
     p.is_jumping = false;
 
     // Load character texture
-    p.texture = LoadTexture("assets/character.png");
-    p.flipleft_texture = LoadTexture("assets/character_flipleft.png");
-    p.hurt_texture = LoadTexture("assets/character_hurt.png");
-    p.hurt_flipleft_texture = LoadTexture("assets/character_hurt_flipleft.png");
-    p.on_fire_texture = LoadTexture("assets/character_on_fire.png");
-    p.on_fire_flipleft_texture = LoadTexture("assets/character_on_fire_flipleft.png");
-    p.sword_texture = LoadTexture("assets/sword.png");
-    p.sword_flipleft_texture = LoadTexture("assets/sword_flipleft.png");
+    p.texture = LoadTexture(get_asset_path("character.png"));
+    p.flipleft_texture = LoadTexture(get_asset_path("character_flipleft.png"));
+    p.hurt_texture = LoadTexture(get_asset_path("character_hurt.png"));
+    p.hurt_flipleft_texture = LoadTexture(get_asset_path("character_hurt_flipleft.png"));
+    p.on_fire_texture = LoadTexture(get_asset_path("character_on_fire.png"));
+    p.on_fire_flipleft_texture = LoadTexture(get_asset_path("character_on_fire_flipleft.png"));
+    p.sword_texture = LoadTexture(get_asset_path("sword.png"));
+    p.sword_flipleft_texture = LoadTexture(get_asset_path("sword_flipleft.png"));
     p.sword_hitbox = (Rectangle){0, 0, 20, 40}; // Example sword hitbox size
     p.scale = 0.06f;                            // Scale down smaller
     p.width = (float)p.texture.width * p.scale;
     p.height = (float)p.texture.height * p.scale;
 
     // Load dead texture (optional - create a simple fallback if file doesn't exist)
-    p.dead_texture = LoadTexture("assets/dead_character.png");
+    p.dead_texture = LoadTexture(get_asset_path("dead_character.png"));
 
     // Load heart textures
-    p.filled_heart_texture = LoadTexture("assets/filled_heart.png");
-    p.empty_heart_texture = LoadTexture("assets/empty_heart.png");
+    p.filled_heart_texture = LoadTexture(get_asset_path("filled_heart.png"));
+    p.empty_heart_texture = LoadTexture(get_asset_path("empty_heart.png"));
 
     // Load fireball texture for inventory display
-    p.fireball_texture = LoadTexture("assets/fireball.png");
+    p.fireball_texture = LoadTexture(get_asset_path("fireball.png"));
 
     // Initialize health
     p.hearts = INITIAL_HEARTS;

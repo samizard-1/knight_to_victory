@@ -1,4 +1,5 @@
 #include "monster.h"
+#include "asset_paths.h"
 #include <stdlib.h>
 
 Monster monster_create(float x, float y, float width, float height, int max_hearts,
@@ -10,7 +11,7 @@ Monster monster_create(float x, float y, float width, float height, int max_hear
     m.velocity = (Vector2){patrol_speed, 0}; // Start moving right
     m.width = width;
     m.height = height;
-    m.texture = LoadTexture(texture_path);
+    m.texture = LoadTexture(get_asset_path(texture_path));
     m.scale = scale;
     m.hearts = max_hearts;
     m.max_hearts = max_hearts;
@@ -20,8 +21,8 @@ Monster monster_create(float x, float y, float width, float height, int max_hear
     m.active = true;
 
     // Load heart textures
-    m.filled_heart_texture = LoadTexture("assets/filled_heart.png");
-    m.empty_heart_texture = LoadTexture("assets/empty_heart.png");
+    m.filled_heart_texture = LoadTexture(get_asset_path("filled_heart.png"));
+    m.empty_heart_texture = LoadTexture(get_asset_path("empty_heart.png"));
 
     return m;
 }

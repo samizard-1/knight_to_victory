@@ -46,7 +46,7 @@ Level level3_create(void)
         300.0f,                    // patrol left boundary
         700.0f,                    // patrol right boundary
         80.0f,                     // patrol speed
-        "assets/monster_slug.png", // texture path
+        "monster_slug.png", // texture path
         0.1f                       // scale
     );
     monster_list_add(&level.monsters, slug);
@@ -60,7 +60,7 @@ Level level3_create(void)
         100.0f,           // patrol left boundary
         600.0f,           // patrol right boundary
         150.0f,           // patrol speed
-        "assets/bat.png", // texture path
+        "bat.png", // texture path
         0.08f             // scale
     );
     monster_list_add(&level.monsters, bat2);

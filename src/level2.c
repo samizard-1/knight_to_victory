@@ -47,7 +47,7 @@ Level level2_create(void)
         400.0f,           // patrol left boundary
         800.0f,           // patrol right boundary
         150.0f,           // patrol speed
-        "assets/bat.png", // texture path
+        "bat.png", // texture path
         0.08f             // scale
     );
     monster_list_add(&level.monsters, bat);
