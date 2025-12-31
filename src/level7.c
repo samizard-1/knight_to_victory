@@ -38,17 +38,31 @@ Level level7_create(void)
 
     Hazard lava = {
         .type = HAZARD_LAVA_PIT,
-        .bounds = {500.0f, 600.0f, 50.0f, 50.0f}, // x, y, width, height
+        .bounds = {500.0f, 650.0f, 100.0f, 100.0f}, // x, y, width, height
         .damage = 1,                              // Lose 1 heart
         .active = true};
     hazard_list_add(&level.hazards, lava);
+    PickupSpawner fireball_spawner2 = pickup_spawner_create(
+        PICKUP_FIREBALL,           // Pickup type
+        (Vector2){525.0f, 650.0f}, // Spawn location
+        1,                         // Value (1 projectile)
+        3.0f                       // Spawn interval
+    );
+    pickup_spawner_list_add(&level.spawners, fireball_spawner2);
 
     Hazard lava2 = {
         .type = HAZARD_LAVA_PIT,
-        .bounds = {700.0f, 600.0f, 50.0f, 50.0f}, // x, y, width, height
+        .bounds = {700.0f, 650.0f, 100.0f, 100.0f}, // x, y, width, height
         .damage = 1,                              // Lose 1 heart
         .active = true};
     hazard_list_add(&level.hazards, lava2);
+    PickupSpawner fireball_spawner3 = pickup_spawner_create(
+        PICKUP_FIREBALL,           // Pickup type
+        (Vector2){725.0f, 650.0f}, // Spawn location
+        1,                         // Value (1 projectile)
+        3.0f                       // Spawn interval
+    );
+    pickup_spawner_list_add(&level.spawners, fireball_spawner3);
 
     return level;
 }
