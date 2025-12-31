@@ -13,14 +13,14 @@ Player player_create(float x, float y)
     p.is_jumping = false;
 
     // Load character texture
-    p.texture = LoadTexture("../assets/character.png");
-    p.flipleft_texture = LoadTexture("../assets/character_flipleft.png");
-    p.hurt_texture = LoadTexture("../assets/character_hurt.png");
-    p.hurt_flipleft_texture = LoadTexture("../assets/character_hurt_flipleft.png");
-    p.on_fire_texture = LoadTexture("../assets/character_on_fire.png");
-    p.on_fire_flipleft_texture = LoadTexture("../assets/character_on_fire_flipleft.png");
-    p.sword_texture = LoadTexture("../assets/sword.png");
-    p.sword_flipleft_texture = LoadTexture("../assets/sword_flipleft.png");
+    p.texture = LoadTexture("assets/character.png");
+    p.flipleft_texture = LoadTexture("assets/character_flipleft.png");
+    p.hurt_texture = LoadTexture("assets/character_hurt.png");
+    p.hurt_flipleft_texture = LoadTexture("assets/character_hurt_flipleft.png");
+    p.on_fire_texture = LoadTexture("assets/character_on_fire.png");
+    p.on_fire_flipleft_texture = LoadTexture("assets/character_on_fire_flipleft.png");
+    p.sword_texture = LoadTexture("assets/sword.png");
+    p.sword_flipleft_texture = LoadTexture("assets/sword_flipleft.png");
     p.sword_hitbox = (Rectangle){0, 0, 20, 40}; // Example sword hitbox size
     p.scale = 0.06f;                            // Scale down smaller
     p.width = (float)p.texture.width * p.scale;

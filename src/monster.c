@@ -20,8 +20,8 @@ Monster monster_create(float x, float y, float width, float height, int max_hear
     m.active = true;
 
     // Load heart textures
-    m.filled_heart_texture = LoadTexture("../assets/filled_heart.png");
-    m.empty_heart_texture = LoadTexture("../assets/empty_heart.png");
+    m.filled_heart_texture = LoadTexture("assets/filled_heart.png");
+    m.empty_heart_texture = LoadTexture("assets/empty_heart.png");
 
     return m;
 }

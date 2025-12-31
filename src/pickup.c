@@ -23,7 +23,7 @@ Pickup pickup_create(PickupType type, Vector2 spawn_pos, int value)
     case PICKUP_FIREBALL:
         p.width = 16.0f;
         p.height = 16.0f;
-        p.texture = LoadTexture("../assets/fireball.png");
+        p.texture = LoadTexture("assets/fireball.png");
         p.scale = 0.04f;
         break;
     default:

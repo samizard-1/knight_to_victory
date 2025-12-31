@@ -38,102 +38,102 @@ Level level5_create(void)
 
     // Add bat monster patrolling in the middle area
     Monster slug = monster_create(
-        600.0f,                       // x position
-        550.0f,                       // y position
-        70.0f,                        // width
-        70.0f,                        // height
-        3,                            // max hearts
-        300.0f,                       // patrol left boundary
-        700.0f,                       // patrol right boundary
-        80.0f,                        // patrol speed
-        "../assets/monster_slug.png", // texture path
-        0.1f                          // scale
+        600.0f,                    // x position
+        550.0f,                    // y position
+        70.0f,                     // width
+        70.0f,                     // height
+        3,                         // max hearts
+        300.0f,                    // patrol left boundary
+        700.0f,                    // patrol right boundary
+        80.0f,                     // patrol speed
+        "assets/monster_slug.png", // texture path
+        0.1f                       // scale
     );
     monster_list_add(&level.monsters, slug);
     // Add bat monster patrolling in the middle area
     Monster bat2 = monster_create(
-        400.0f,              // x position
-        535.0f,              // y position
-        80.0f,               // width
-        80.0f,               // height
-        2,                   // max hearts
-        100.0f,              // patrol left boundary
-        600.0f,              // patrol right boundary
-        150.0f,              // patrol speed
-        "../assets/bat.png", // texture path
-        0.08f                // scale
+        400.0f,           // x position
+        535.0f,           // y position
+        80.0f,            // width
+        80.0f,            // height
+        2,                // max hearts
+        100.0f,           // patrol left boundary
+        600.0f,           // patrol right boundary
+        150.0f,           // patrol speed
+        "assets/bat.png", // texture path
+        0.08f             // scale
     );
     Monster crab = monster_create(
-        600.0f,               // x position
-        565.0f,               // y position
-        70.0f,                // width
-        70.0f,                // height
-        2,                    // max hearts
-        900.0f,               // patrol left boundary
-        1700.0f,              // patrol right boundary
-        150.0f,               // patrol speed
-        "../assets/crab.png", // texture path
-        0.1f                  // scale
+        600.0f,            // x position
+        565.0f,            // y position
+        70.0f,             // width
+        70.0f,             // height
+        2,                 // max hearts
+        900.0f,            // patrol left boundary
+        1700.0f,           // patrol right boundary
+        150.0f,            // patrol speed
+        "assets/crab.png", // texture path
+        0.1f               // scale
     );
     Monster bat3 = monster_create(
-        400.0f,              // x position
-        475.0f,              // y position
-        80.0f,               // width
-        80.0f,               // height
-        4,                   // max hearts
-        1000.0f,             // patrol left boundary
-        1600.0f,             // patrol right boundary
-        150.0f,              // patrol speed
-        "../assets/bat.png", // texture path
-        0.35f                // scale
+        400.0f,           // x position
+        475.0f,           // y position
+        80.0f,            // width
+        80.0f,            // height
+        4,                // max hearts
+        1000.0f,          // patrol left boundary
+        1600.0f,          // patrol right boundary
+        150.0f,           // patrol speed
+        "assets/bat.png", // texture path
+        0.35f             // scale
     );
     Monster slug3 = monster_create(
-        600.0f,                       // x position
-        565.0f,                       // y position
-        70.0f,                        // width
-        70.0f,                        // height
-        1,                            // max hearts
-        1600.0f,                      // patrol left boundary
-        2000.0f,                      // patrol right boundary
-        100.0f,                       // patrol speed
-        "../assets/monster_slug.png", // texture path
-        0.07f                         // scale
+        600.0f,                    // x position
+        565.0f,                    // y position
+        70.0f,                     // width
+        70.0f,                     // height
+        1,                         // max hearts
+        1600.0f,                   // patrol left boundary
+        2000.0f,                   // patrol right boundary
+        100.0f,                    // patrol speed
+        "assets/monster_slug.png", // texture path
+        0.07f                      // scale
     );
     Monster bat4 = monster_create(
-        750.0f,              // x position
-        450.0f,              // y position
-        80.0f,               // width
-        80.0f,               // height
-        2,                   // max hearts
-        1200.0f,             // patrol left boundary
-        1800.0f,             // patrol right boundary
-        120.0f,              // patrol speed
-        "../assets/bat.png", // texture path
-        0.08f                // scale
+        750.0f,           // x position
+        450.0f,           // y position
+        80.0f,            // width
+        80.0f,            // height
+        2,                // max hearts
+        1200.0f,          // patrol left boundary
+        1800.0f,          // patrol right boundary
+        120.0f,           // patrol speed
+        "assets/bat.png", // texture path
+        0.08f             // scale
     );
     Monster slug4 = monster_create(
-        850.0f,                       // x position
-        555.0f,                       // y position
-        70.0f,                        // width
-        70.0f,                        // height
-        2,                            // max hearts
-        800.0f,                       // patrol left boundary
-        1100.0f,                      // patrol right boundary
-        90.0f,                        // patrol speed
-        "../assets/monster_slug.png", // texture path
-        0.09f                         // scale
+        850.0f,                    // x position
+        555.0f,                    // y position
+        70.0f,                     // width
+        70.0f,                     // height
+        2,                         // max hearts
+        800.0f,                    // patrol left boundary
+        1100.0f,                   // patrol right boundary
+        90.0f,                     // patrol speed
+        "assets/monster_slug.png", // texture path
+        0.09f                      // scale
     );
     Monster bat5 = monster_create(
-        1200.0f,             // x position
-        450.0f,              // y position
-        80.0f,               // width
-        80.0f,               // height
-        1,                   // max hearts
-        1100.0f,             // patrol left boundary
-        1900.0f,             // patrol right boundary
-        110.0f,              // patrol speed
-        "../assets/bat.png", // texture path
-        0.06f                // scale
+        1200.0f,          // x position
+        450.0f,           // y position
+        80.0f,            // width
+        80.0f,            // height
+        1,                // max hearts
+        1100.0f,          // patrol left boundary
+        1900.0f,          // patrol right boundary
+        110.0f,           // patrol speed
+        "assets/bat.png", // texture path
+        0.06f             // scale
     );
     monster_list_add(&level.monsters, bat2);
     monster_list_add(&level.monsters, crab);

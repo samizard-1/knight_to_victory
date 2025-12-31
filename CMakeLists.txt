@@ -43,3 +43,10 @@ if(APPLE)
     target_link_libraries(game "-framework Cocoa")
     target_link_libraries(game "-framework OpenGL")
 endif()
+# Copy assets to build directory
+add_custom_command(TARGET game POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets
+    $<TARGET_FILE_DIR:game>/assets
+    COMMENT "Copying assets to build directory"
+)
