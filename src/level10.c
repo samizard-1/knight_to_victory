@@ -26,7 +26,7 @@ Level level10_create(void)
         .type = GOAL_TYPE_MONSTERS,
         .goal_position = {1000.0f, 538.0f},
         .goal_radius = 50.0f,
-        .monsters_to_defeat = 3,
+        .monsters_to_defeat = 2,
         .monsters_defeated = 0};
 
     Level level = level_create(
@@ -41,12 +41,12 @@ Level level10_create(void)
     //"bat"
     Monster dragon = monster_create(
         800.0f,                 // x position
-        350.0f,                 // y position
+        305.0f,                 // y position
         475.0f,                 // width
         300.0f,                 // height
-        20,                     // max hearts
-        650.0f,                 // patrol left boundary
-        850.0f,                 // patrol right boundary
+        12,                     // max hearts
+        850.0f,                 // patrol left boundary
+        950.0f,                 // patrol right boundary
         90.0f,                  // patrol speed
         "../assets/dragon.png", // texture path
         0.5f                    // scale
@@ -56,5 +56,18 @@ Level level10_create(void)
     dragon_apply_customizations(&dragon);
 
     monster_list_add(&level.monsters, dragon);
+    Monster baby1 = monster_create(
+        800.0f,                 // x position
+        525.0f,                 // y position
+        475.0f,                 // width
+        300.0f,                 // height
+        6,                     // max hearts
+        650.0f,                 // patrol left boundary
+        850.0f,                 // patrol right boundary
+        135.0f,                  // patrol speed
+        "../assets/baby_dragon.png", // texture path
+        0.18f                    // scale
+    );
+    monster_list_add(&level.monsters, baby1);
     return level;
 }

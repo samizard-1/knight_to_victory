@@ -76,7 +76,7 @@ void dragon_apply_customizations(Monster *dragon)
     // Allocate and initialize dragon-specific data
     DragonData *data = (DragonData *)malloc(sizeof(DragonData));
     data->fire_cooldown = 0.0f;
-    data->fire_cooldown_max = 2.0f; // Fire every 2 seconds
+    data->fire_cooldown_max = 4.0f; // Fire every 2 seconds
     data->firing_range = 800.0f;    // Only fire if player is within this distance
 
     dragon->custom_data = data;

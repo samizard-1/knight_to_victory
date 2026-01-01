@@ -1,4 +1,5 @@
 #include "hazard.h"
+#include "asset_paths.h"
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -14,6 +15,14 @@ HazardList hazard_list_create(int capacity)
 
 void hazard_list_cleanup(HazardList *list)
 {
+    for (int i = 0; i < list->count; i++)
+    {
+        if (list->hazards[i].texture.id != 0)
+        {
+            UnloadTexture(list->hazards[i].texture);
+        }
+    }
+
     if (list->hazards != NULL)
     {
         free(list->hazards);
@@ -25,6 +34,11 @@ void hazard_list_cleanup(HazardList *list)
 
 void hazard_list_add(HazardList *list, Hazard hazard)
 {
+    if (hazard.type == HAZARD_DUST_STORM && hazard.texture.id == 0)
+    {
+        hazard.texture = LoadTexture(get_asset_path("dust_tornado.png"));
+    }
+
     if (list->count < list->capacity)
     {
         list->hazards[list->count++] = hazard;
@@ -74,6 +88,17 @@ void hazard_draw(Hazard *hazard, float camera_x)
         // Draw spike trap as red rectangle
         DrawRectangle((int)draw_rect.x, (int)draw_rect.y, (int)draw_rect.width, (int)draw_rect.height,
                       (Color){200, 0, 0, 255});
+        break;
+    }
+    case HAZARD_DUST_STORM:
+    {
+        // Draw dust storm
+        DrawTexturePro(hazard->texture,
+                           (Rectangle){0, 0, (float)hazard->texture.width, (float)hazard->texture.height},
+                           draw_rect,
+                           (Vector2){0, 0},
+                           0.0f,
+                           (Color){255, 255, 255, 150});
         break;
     }
     }

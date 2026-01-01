@@ -6,7 +6,8 @@
 typedef enum
 {
     HAZARD_LAVA_PIT,
-    HAZARD_SPIKE_TRAP
+    HAZARD_SPIKE_TRAP,
+    HAZARD_DUST_STORM
 } HazardType;
 
 typedef struct
@@ -15,6 +16,7 @@ typedef struct
     Rectangle bounds; // Position and size of the hazard
     int damage;       // Damage dealt on contact
     bool active;      // Whether the hazard is still active
+    Texture2D texture; // Texture for visual representation
 } Hazard;
 
 typedef struct
