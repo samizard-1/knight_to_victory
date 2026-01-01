@@ -5,7 +5,7 @@
 #include "level.h"
 #include "projectile.h"
 
-#define MAX_LEVELS 10
+#define MAX_LEVELS 20
 
 typedef enum
 {

@@ -111,7 +111,8 @@ static void initialize_levels(GameState *state)
     state->levels[2] = level3_create();
     state->levels[3] = level4_create();
     state->levels[4] = level5_create();  // Add this line
-    state->levels[4] = level8_create();  // Add this line
+    state->levels[7] = level8_create();
+    state->levels[9] = level10_create();  // Add this line
 
     state->current_level_index = 0;
 }
