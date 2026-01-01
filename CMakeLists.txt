@@ -19,6 +19,7 @@ add_executable(game
     src/projectile.c
     src/pickup.c
     src/asset_paths.c
+    src/dragon.c
     src/level1.c
     src/level2.c
     src/level3.c

@@ -24,6 +24,12 @@ Monster monster_create(float x, float y, float width, float height, int max_hear
     m.filled_heart_texture = LoadTexture(get_asset_path("filled_heart.png"));
     m.empty_heart_texture = LoadTexture(get_asset_path("empty_heart.png"));
 
+    // Initialize function pointers with defaults
+    m.draw_hearts = monster_draw_hearts_default;
+    m.custom_update = NULL;
+    m.custom_cleanup = NULL;
+    m.custom_data = NULL;
+
     return m;
 }
 
@@ -32,6 +38,14 @@ void monster_update(Monster *monster)
     if (!monster->active)
         return;
 
+    // Run custom update first if provided
+    if (monster->custom_update)
+    {
+        monster->custom_update(monster);
+        return; // If custom update is provided, skip default behavior
+    }
+
+    // Default update: patrol logic
     // Update position based on velocity
     monster->position.x += monster->velocity.x * GetFrameTime();
 
@@ -45,6 +59,37 @@ void monster_update(Monster *monster)
     {
         monster->position.x = monster->patrol_right_bound;
         monster->velocity.x = -monster->patrol_speed; // Move left
+    }
+}
+
+void monster_draw_hearts_default(Monster *monster, float screen_pos_x, float screen_pos_y)
+{
+    // Draw hearts above monster using textures
+    float heart_size = 24.0f;
+    float heart_spacing = 28.0f;
+    float total_hearts_width = (monster->max_hearts * heart_spacing) - 4.0f; // Spacing adjustment
+
+    // Calculate actual drawn dimensions of monster texture
+    float drawn_width = monster->texture.width * monster->scale;
+    float drawn_height = monster->texture.height * monster->scale;
+    float monster_center_x = screen_pos_x + drawn_width / 2.0f;
+    float hearts_start_x = monster_center_x - total_hearts_width / 2.0f;
+    float hearts_y = screen_pos_y - drawn_height - 15.0f; // Above the monster
+
+    // Draw max hearts first (empty hearts)
+    for (int i = 0; i < monster->max_hearts; i++)
+    {
+        Rectangle source = {0, 0, (float)monster->empty_heart_texture.width, (float)monster->empty_heart_texture.height};
+        Rectangle dest = {hearts_start_x + i * heart_spacing, hearts_y, heart_size, heart_size};
+        DrawTexturePro(monster->empty_heart_texture, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
+    }
+
+    // Draw current hearts on top (filled hearts)
+    for (int i = 0; i < monster->hearts; i++)
+    {
+        Rectangle source = {0, 0, (float)monster->filled_heart_texture.width, (float)monster->filled_heart_texture.height};
+        Rectangle dest = {hearts_start_x + i * heart_spacing, hearts_y, heart_size, heart_size};
+        DrawTexturePro(monster->filled_heart_texture, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
     }
 }
 
@@ -81,33 +126,8 @@ void monster_draw(Monster *monster, float camera_x)
         RED);
     */
 
-    // Draw hearts above monster using textures
-    float heart_size = 24.0f;
-    float heart_spacing = 28.0f;
-    float total_hearts_width = (monster->max_hearts * heart_spacing) - 4.0f; // Spacing adjustment
-
-    // Calculate actual drawn dimensions of monster texture
-    float drawn_width = monster->texture.width * monster->scale;
-    float drawn_height = monster->texture.height * monster->scale;
-    float monster_center_x = screen_pos.x + drawn_width / 2.0f;
-    float hearts_start_x = monster_center_x - total_hearts_width / 2.0f;
-    float hearts_y = screen_pos.y - drawn_height - 15.0f; // Above the monster
-
-    // Draw max hearts first (empty hearts)
-    for (int i = 0; i < monster->max_hearts; i++)
-    {
-        Rectangle source = {0, 0, (float)monster->empty_heart_texture.width, (float)monster->empty_heart_texture.height};
-        Rectangle dest = {hearts_start_x + i * heart_spacing, hearts_y, heart_size, heart_size};
-        DrawTexturePro(monster->empty_heart_texture, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
-    }
-
-    // Draw current hearts on top (filled hearts)
-    for (int i = 0; i < monster->hearts; i++)
-    {
-        Rectangle source = {0, 0, (float)monster->filled_heart_texture.width, (float)monster->filled_heart_texture.height};
-        Rectangle dest = {hearts_start_x + i * heart_spacing, hearts_y, heart_size, heart_size};
-        DrawTexturePro(monster->filled_heart_texture, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
-    }
+    // Draw hearts using custom or default function
+    monster->draw_hearts(monster, screen_pos.x, screen_pos.y);
 }
 
 void monster_take_damage(Monster *monster, int damage)
@@ -121,6 +141,20 @@ void monster_take_damage(Monster *monster, int damage)
         monster->hearts = 0;
         monster->active = false;
     }
+}
+
+void monster_cleanup(Monster *monster)
+{
+    // Call custom cleanup if provided
+    if (monster->custom_cleanup)
+    {
+        monster->custom_cleanup(monster);
+    }
+
+    // Unload textures
+    UnloadTexture(monster->texture);
+    UnloadTexture(monster->filled_heart_texture);
+    UnloadTexture(monster->empty_heart_texture);
 }
 
 bool monster_check_collision(Monster *monster, Rectangle player_rect)
@@ -158,12 +192,10 @@ void monster_list_cleanup(MonsterList *list)
 {
     if (list->monsters)
     {
-        // Unload textures for each monster
+        // Cleanup each monster
         for (int i = 0; i < list->count; i++)
         {
-            UnloadTexture(list->monsters[i].texture);
-            UnloadTexture(list->monsters[i].filled_heart_texture);
-            UnloadTexture(list->monsters[i].empty_heart_texture);
+            monster_cleanup(&list->monsters[i]);
         }
         free(list->monsters);
         list->monsters = NULL;

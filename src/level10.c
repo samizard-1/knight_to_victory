@@ -1,4 +1,5 @@
 #include "level.h"
+#include "dragon.h"
 
 /*
  * Level 6: Final Challenge
@@ -39,17 +40,21 @@ Level level10_create(void)
     // Add unique slug 1
     //"bat"
     Monster dragon = monster_create(
-        800.0f,                       // x position
-        350.0f,                       // y position
-        70.0f,                        // width
-        70.0f,                        // height
-        20,                            // max hearts
-        650.0f,                       // patrol left boundary
-        850.0f,                      // patrol right boundary
-        90.0f,                       // patrol speed
+        800.0f,                 // x position
+        350.0f,                 // y position
+        475.0f,                 // width
+        300.0f,                 // height
+        20,                     // max hearts
+        650.0f,                 // patrol left boundary
+        850.0f,                 // patrol right boundary
+        90.0f,                  // patrol speed
         "../assets/dragon.png", // texture path
-        0.5f                         // scale
+        0.5f                    // scale
     );
+
+    // Apply dragon-specific customizations
+    dragon_apply_customizations(&dragon);
+
     monster_list_add(&level.monsters, dragon);
     return level;
 }
