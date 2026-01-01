@@ -8,6 +8,7 @@
 #include "projectile.h"
 #include "pickup.h"
 #include "config.h"
+#include "dragon.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -138,7 +139,7 @@ static void initialize_levels(GameState *state)
     state->levels[8] = level9_create();
     state->levels[9] = level10_create();
 
-    state->current_level_index = 9;
+    state->current_level_index = 0;
 }
 
 void game_init(GameState *state)
@@ -228,6 +229,17 @@ void game_update(GameState *state)
             monster_update(&current_level->monsters.monsters[i]);
         }
 
+        // Update dragon AI - make dragons fire at the player
+        for (int i = 0; i < current_level->monsters.count; i++)
+        {
+            Monster *monster = &current_level->monsters.monsters[i];
+            // Check if this is a dragon (has custom_data allocated for dragon behavior)
+            if (monster->active && monster->custom_data != NULL && monster->custom_update == dragon_custom_update)
+            {
+                dragon_fire_at_target(monster, &state->projectiles, player.position);
+            }
+        }
+
         // Handle projectile firing on left mouse click
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && player.projectile_inventory > 0)
         {
@@ -238,7 +250,8 @@ void game_update(GameState *state)
             // Create and fire a fireball projectile from player to mouse position
             Projectile fireball = projectile_create_fireball(
                 (Vector2){player.position.x + player.width / 2.0f, player.position.y},
-                (Vector2){world_mouse_x, mouse_pos.y});
+                (Vector2){world_mouse_x, mouse_pos.y},
+                PROJECTILE_SOURCE_PLAYER);
             projectile_list_add(&state->projectiles, fireball);
             player.projectile_inventory--; // Consume one projectile
         }
@@ -395,11 +408,11 @@ void game_update(GameState *state)
         }
     }
 
-    // Check for projectile-monster collisions
+    // Check for projectile-monster collisions (only player projectiles hit monsters)
     for (int p = 0; p < state->projectiles.count; p++)
     {
         Projectile *projectile = &state->projectiles.projectiles[p];
-        if (!projectile->active)
+        if (!projectile->active || projectile->source != PROJECTILE_SOURCE_PLAYER)
             continue;
 
         Rectangle projectile_rect = {
@@ -432,6 +445,33 @@ void game_update(GameState *state)
                 {
                     current_level->goal.monsters_defeated++;
                 }
+            }
+        }
+    }
+
+    // Check for monster projectile-player collisions
+    for (int p = 0; p < state->projectiles.count; p++)
+    {
+        Projectile *projectile = &state->projectiles.projectiles[p];
+
+        if (projectile_check_player_collision(projectile, player_rect))
+        {
+            // Monster projectile hit player
+            player_take_damage(&player, 1); // Each projectile deals 1 damage
+
+            // Set burnt effect (same as lava hazard)
+            player.is_burnt = true;
+            player.burnt_timer = PAUSE_DURATION;                // Show burnt effect
+            state->burnt_message_timer = PAUSE_DURATION;        // Display message
+            state->is_paused = true;                            // Pause the game
+            state->hazard_cooldown = 3.0f;                      // Cooldown to prevent re-collision
+            state->last_collision_type = COLLISION_TYPE_HAZARD; // Track collision type
+            projectile->active = false;                         // Destroy projectile on impact
+
+            // Check if player is out of hearts
+            if (player.hearts <= 0)
+            {
+                state->game_over = true; // Trigger game over
             }
         }
     }

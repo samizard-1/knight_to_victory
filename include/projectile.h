@@ -9,6 +9,12 @@ typedef enum
     // Future projectile types can be added here (PROJECTILE_LIGHTNING, etc.)
 } ProjectileType;
 
+typedef enum
+{
+    PROJECTILE_SOURCE_PLAYER,
+    PROJECTILE_SOURCE_MONSTER
+} ProjectileSource;
+
 typedef struct
 {
     Vector2 position;
@@ -19,6 +25,7 @@ typedef struct
     Texture2D texture;
     float scale;
     ProjectileType type;
+    ProjectileSource source; // Who fired this projectile
     bool active;
     float lifetime;     // Time remaining for the projectile to live
     float max_lifetime; // Maximum lifetime before despawning
@@ -32,9 +39,10 @@ typedef struct
 } ProjectileList;
 
 // Projectile functions
-Projectile projectile_create_fireball(Vector2 start_pos, Vector2 target_pos);
+Projectile projectile_create_fireball(Vector2 start_pos, Vector2 target_pos, ProjectileSource source);
 void projectile_update(Projectile *projectile);
 void projectile_draw(Projectile *projectile, float camera_x);
+bool projectile_check_player_collision(Projectile *projectile, Rectangle player_rect);
 
 // Projectile list functions
 ProjectileList projectile_list_create(int capacity);

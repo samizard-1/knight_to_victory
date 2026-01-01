@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-Projectile projectile_create_fireball(Vector2 start_pos, Vector2 target_pos)
+Projectile projectile_create_fireball(Vector2 start_pos, Vector2 target_pos, ProjectileSource source)
 {
     Projectile p;
     p.position = start_pos;
@@ -29,6 +29,7 @@ Projectile projectile_create_fireball(Vector2 start_pos, Vector2 target_pos)
     p.texture = LoadTexture(get_asset_path("fireball.png"));
     p.scale = 0.04f;
     p.type = PROJECTILE_FIREBALL;
+    p.source = source;
     p.active = true;
     p.lifetime = 10.0f; // 10 seconds max lifetime
     p.max_lifetime = 10.0f;
@@ -83,6 +84,20 @@ void projectile_draw(Projectile *projectile, float camera_x)
         0.0f,
         projectile->scale,
         WHITE);
+}
+
+bool projectile_check_player_collision(Projectile *projectile, Rectangle player_rect)
+{
+    if (!projectile->active || projectile->source == PROJECTILE_SOURCE_PLAYER)
+        return false;
+
+    Rectangle projectile_rect = {
+        projectile->position.x,
+        projectile->position.y,
+        projectile->width,
+        projectile->height};
+
+    return CheckCollisionRecs(projectile_rect, player_rect);
 }
 
 ProjectileList projectile_list_create(int capacity)
