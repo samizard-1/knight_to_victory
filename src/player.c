@@ -1,4 +1,5 @@
 #include "player.h"
+#include "damage.h"
 #include "hazard.h"
 #include "config.h"
 #include "asset_paths.h"
@@ -20,6 +21,8 @@ Player player_create(float x, float y)
     p.hurt_flipleft_texture = LoadTexture(get_asset_path("character_hurt_flipleft.png"));
     p.on_fire_texture = LoadTexture(get_asset_path("character_on_fire.png"));
     p.on_fire_flipleft_texture = LoadTexture(get_asset_path("character_on_fire_flipleft.png"));
+    p.dust_texture = LoadTexture(get_asset_path("blood_sand.png"));
+    p.dust_flipleft_texture = LoadTexture(get_asset_path("blood_sand_flipleft.png"));
     p.sword_texture = LoadTexture(get_asset_path("sword.png"));
     p.sword_flipleft_texture = LoadTexture(get_asset_path("sword_flipleft.png"));
     p.sword_hitbox = (Rectangle){0, 0, 20, 40}; // Example sword hitbox size
@@ -41,10 +44,8 @@ Player player_create(float x, float y)
     p.hearts = INITIAL_HEARTS;
     p.max_hearts = MAX_HEARTS;
     p.is_dead = false;
-    p.is_hurt = false;
-    p.hurt_timer = 0.0f;
-    p.is_burnt = false;
-    p.burnt_timer = 0.0f;
+    p.active_damage_type = DAMAGE_TYPE_NONE;
+    p.damage_timer = 0.0f;
 
     // Initialize projectile inventory
     p.projectile_inventory = 0; // Start with 0 projectiles
@@ -98,13 +99,13 @@ void player_update(Player *player)
 {
     float delta_time = GetFrameTime();
 
-    // Update hurt timer
-    if (player->is_hurt)
+    // Update damage timer
+    if (player->active_damage_type != DAMAGE_TYPE_NONE)
     {
-        player->hurt_timer -= delta_time;
-        if (player->hurt_timer <= 0.0f)
+        player->damage_timer -= delta_time;
+        if (player->damage_timer <= 0.0f)
         {
-            player->is_hurt = false;
+            player->active_damage_type = DAMAGE_TYPE_NONE;
         }
     }
 
@@ -128,13 +129,13 @@ void player_update_with_hazards(Player *player, const void *hazard_list)
 {
     float delta_time = GetFrameTime();
 
-    // Update hurt timer
-    if (player->is_hurt)
+    // Update damage timer
+    if (player->active_damage_type != DAMAGE_TYPE_NONE)
     {
-        player->hurt_timer -= delta_time;
-        if (player->hurt_timer <= 0.0f)
+        player->damage_timer -= delta_time;
+        if (player->damage_timer <= 0.0f)
         {
-            player->is_hurt = false;
+            player->active_damage_type = DAMAGE_TYPE_NONE;
         }
     }
 
@@ -220,7 +221,7 @@ void player_draw(Player *player, float camera_x)
         player->position.x - camera_x + GetScreenWidth() / 2.0f,
         player->position.y};
 
-    // Choose texture based on alive/dead state and facing direction
+    // Choose texture based on alive/dead state and damage type
     Texture2D texture_to_draw = player->texture;
     float draw_scale = player->scale;
 
@@ -241,66 +242,69 @@ void player_draw(Player *player, float camera_x)
             screen_pos.y -= (dead_height - original_height);
         }
     }
-    else if (player->is_hurt)
+    else if (player->active_damage_type != DAMAGE_TYPE_NONE)
     {
-        // Use hurt texture when hit by monster
+        // Use damage-type-specific texture
+        Texture2D damage_texture;
+        Texture2D damage_flipleft_texture;
+        float damage_scale = player->scale;
+
+        // Get display properties for this damage type
+        DamageTextureDisplay display_props = damage_type_get_display_properties(player->active_damage_type);
+        damage_scale = player->scale * display_props.scale_multiplier;
+
+        switch (player->active_damage_type)
+        {
+        case DAMAGE_TYPE_MONSTER_HIT:
+            damage_texture = player->hurt_texture;
+            damage_flipleft_texture = player->hurt_flipleft_texture;
+            break;
+
+        case DAMAGE_TYPE_FIRE:
+            damage_texture = player->on_fire_texture;
+            damage_flipleft_texture = player->on_fire_flipleft_texture;
+            break;
+
+        case DAMAGE_TYPE_DUST:
+            damage_texture = player->dust_texture;
+            damage_flipleft_texture = player->dust_flipleft_texture;
+            break;
+
+        default:
+            damage_texture = player->texture;
+            damage_flipleft_texture = player->flipleft_texture;
+            break;
+        }
+
+        // Choose direction-specific texture
         if (player->facing_direction == -1)
         {
-            texture_to_draw = player->hurt_flipleft_texture;
-            if (player->hurt_flipleft_texture.id == 0)
+            texture_to_draw = damage_flipleft_texture;
+            if (texture_to_draw.id == 0)
             {
-                texture_to_draw = player->hurt_texture;
+                texture_to_draw = damage_texture;
             }
         }
         else
         {
-            texture_to_draw = player->hurt_texture;
+            texture_to_draw = damage_texture;
         }
 
+        // Fallback to neutral texture if damage texture isn't loaded
         if (texture_to_draw.id == 0)
         {
             texture_to_draw = player->facing_direction == -1 ? player->flipleft_texture : player->texture;
         }
         else
         {
-            // Make hurt texture slightly larger
-            draw_scale = player->scale * 1.2f;
+            draw_scale = damage_scale;
 
             // Adjust Y position so bottom remains on ground
+            // Use damage-specific y_offset from display properties
             float original_height = (float)player->texture.height * player->scale;
-            float hurt_height = (float)texture_to_draw.height * draw_scale;
-            screen_pos.y -= (hurt_height - original_height);
-        }
-    }
-    else if (player->is_burnt)
-    {
-        // Use on fire texture when burnt
-        if (player->facing_direction == -1)
-        {
-            texture_to_draw = player->on_fire_flipleft_texture;
-            if (player->on_fire_flipleft_texture.id == 0)
-            {
-                texture_to_draw = player->on_fire_texture;
-            }
-        }
-        else
-        {
-            texture_to_draw = player->on_fire_texture;
-        }
-
-        if (texture_to_draw.id == 0)
-        {
-            texture_to_draw = player->facing_direction == -1 ? player->flipleft_texture : player->texture;
-        }
-        else
-        {
-            // Make on fire texture slightly larger
-            draw_scale = player->scale * 1.8f;
-
-            // Adjust Y position so feet remain on ground (not the top)
-            float original_height = (float)player->texture.height * player->scale;
-            float on_fire_height = (float)texture_to_draw.height * draw_scale;
-            screen_pos.y -= (on_fire_height - original_height);
+            float damage_height = (float)texture_to_draw.height * draw_scale;
+            float height_difference = damage_height - original_height;
+            screen_pos.y -= (height_difference * (1.0f + display_props.y_offset));
         }
     }
     else if (player->facing_direction == -1)
@@ -372,11 +376,19 @@ void player_take_damage(Player *player, int damage)
     }
 }
 
-void player_set_hurt(Player *player)
+void player_apply_damage_type(Player *player, DamageType damage_type, float duration)
 {
-    // Set hurt state for monster damage
-    player->is_hurt = true;
-    player->hurt_timer = 0.5f; // Show hurt texture for 0.5 seconds
+    if (player->is_dead)
+        return;
+
+    player->active_damage_type = damage_type;
+    player->damage_timer = duration;
+}
+
+void player_clear_damage_type(Player *player)
+{
+    player->active_damage_type = DAMAGE_TYPE_NONE;
+    player->damage_timer = 0.0f;
 }
 
 void player_heal(Player *player, int amount)
@@ -415,6 +427,14 @@ void player_cleanup(Player *player)
     if (player->on_fire_flipleft_texture.id > 0)
     {
         UnloadTexture(player->on_fire_flipleft_texture);
+    }
+    if (player->dust_texture.id > 0)
+    {
+        UnloadTexture(player->dust_texture);
+    }
+    if (player->dust_flipleft_texture.id > 0)
+    {
+        UnloadTexture(player->dust_flipleft_texture);
     }
     if (player->dead_texture.id > 0)
     {

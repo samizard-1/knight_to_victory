@@ -203,7 +203,7 @@ void game_update(GameState *state)
             player.velocity = (Vector2){0, 0};
             player.hearts = player.max_hearts; // Full health for new level
             player.is_dead = false;            // Reset dead flag so damage can be taken
-            player.is_burnt = false;           // Reset burnt effect
+            player_clear_damage_type(&player); // Reset any active damage effects
             level_reset(next_level);
 
             // Reinitialize background with new level's variant
@@ -228,6 +228,12 @@ void game_update(GameState *state)
         for (int i = 0; i < current_level->monsters.count; i++)
         {
             monster_update(&current_level->monsters.monsters[i]);
+        }
+
+        // Update all hazards
+        for (int i = 0; i < current_level->hazards.count; i++)
+        {
+            hazard_update(&current_level->hazards.hazards[i]);
         }
 
         // Update dragon AI - make dragons fire at the player
@@ -299,9 +305,27 @@ void game_update(GameState *state)
                 // Player hit a hazard
                 player_take_damage(&player, hazard->damage);
 
-                // Set burnt effect
-                player.is_burnt = true;
-                player.burnt_timer = PAUSE_DURATION;                // Show burnt effect
+                // Apply damage type based on hazard type
+                DamageType damage_type = DAMAGE_TYPE_FIRE; // Default to fire
+                float damage_duration = DAMAGE_DISPLAY_FIRE;
+
+                switch (hazard->type)
+                {
+                case HAZARD_LAVA_PIT:
+                    damage_type = DAMAGE_TYPE_FIRE;
+                    damage_duration = DAMAGE_DISPLAY_FIRE;
+                    break;
+                case HAZARD_DUST_STORM:
+                    damage_type = DAMAGE_TYPE_DUST;
+                    damage_duration = DAMAGE_DISPLAY_DUST;
+                    break;
+                case HAZARD_SPIKE_TRAP:
+                    damage_type = DAMAGE_TYPE_MONSTER_HIT; // Spikes feel like sharp impacts
+                    damage_duration = DAMAGE_DISPLAY_MONSTER_HIT;
+                    break;
+                }
+
+                player_apply_damage_type(&player, damage_type, damage_duration);
                 state->burnt_message_timer = PAUSE_DURATION;        // Display message
                 state->is_paused = true;                            // Pause the game
                 state->hazard_cooldown = 3.0f;                      // Cooldown to prevent re-collision
@@ -360,7 +384,7 @@ void game_update(GameState *state)
             {
                 // Player hit a monster
                 player_take_damage(&player, 1); // Monsters deal 1 damage
-                player_set_hurt(&player);       // Set hurt state for monster damage
+                player_apply_damage_type(&player, DAMAGE_TYPE_MONSTER_HIT, DAMAGE_DISPLAY_MONSTER_HIT);
 
                 // Pause the game and set cooldown
                 state->burnt_message_timer = PAUSE_DURATION;         // Control pause duration
@@ -460,9 +484,8 @@ void game_update(GameState *state)
             // Monster projectile hit player
             player_take_damage(&player, 1); // Each projectile deals 1 damage
 
-            // Set burnt effect (same as lava hazard)
-            player.is_burnt = true;
-            player.burnt_timer = PAUSE_DURATION;                // Show burnt effect
+            // Apply fire damage type (projectiles are fire-based)
+            player_apply_damage_type(&player, DAMAGE_TYPE_FIRE, DAMAGE_DISPLAY_FIRE);
             state->burnt_message_timer = PAUSE_DURATION;        // Display message
             state->is_paused = true;                            // Pause the game
             state->hazard_cooldown = 3.0f;                      // Cooldown to prevent re-collision
@@ -489,17 +512,6 @@ void game_update(GameState *state)
         state->sword_attack_cooldown -= state->delta_time;
     }
 
-    // Update burnt timer
-    if (player.is_burnt)
-    {
-        player.burnt_timer -= state->delta_time;
-        if (player.burnt_timer <= 0.0f)
-        {
-            player.is_burnt = false;
-            player.burnt_timer = 0.0f;
-        }
-    }
-
     // Update burnt message timer
     if (state->burnt_message_timer > 0.0f)
     {
@@ -513,6 +525,7 @@ void game_update(GameState *state)
         // Respawn player at level start
         player.position = current_level->player_start_position;
         player.velocity = (Vector2){0, 0};
+        player_clear_damage_type(&player); // Clear any active damage effects on respawn
     }
 
     // Update game over timer
@@ -527,8 +540,8 @@ void game_update(GameState *state)
             state->hazard_cooldown = 0.0f; // Reset cooldown to allow immediate damage detection
             player.hearts = player.max_hearts;
             player.is_dead = false;
-            player.is_burnt = false;
-            player.projectile_inventory = 0; // Reset inventory on game over
+            player_clear_damage_type(&player); // Clear any active damage effects
+            player.projectile_inventory = 0;   // Reset inventory on game over
 
             // Reactivate all enemies (monsters and hazards) in all levels
             for (int i = 0; i < state->level_count; i++)
@@ -780,16 +793,8 @@ void game_draw(GameState *state)
             DrawText(lose_message, lose_center_x, lose_center_y, 60, RED);
         }
 
-        // Display appropriate damage message
-        const char *damage_message;
-        if (state->last_collision_type == COLLISION_TYPE_MONSTER)
-        {
-            damage_message = "You've been Hit!";
-        }
-        else
-        {
-            damage_message = "You're burnt!";
-        }
+        // Display appropriate damage message based on damage type
+        const char *damage_message = damage_type_get_message(player.active_damage_type);
 
         int message_text_width = MeasureText(damage_message, 40);
         int message_center_x = (state->screen_width - message_text_width) / 2;

@@ -30,8 +30,8 @@ Level level11_create(void)
         .hazards_defeated = 0};
 
     Level level = level_create(
-        9,                         // level number
-        "The Dragon's Guards",     // level name
+        11,                        // level number
+        "Dustmania",               // level name
         background,                // background configuration
         (Vector2){100.0f, 400.0f}, // player start position
         goal                       // level goal
@@ -42,7 +42,12 @@ Level level11_create(void)
         .type = HAZARD_DUST_STORM,
         .bounds = {500.0f, 500.0f, 150.0f, 100.0f}, // x, y, width, height (below ground)
         .damage = 1,                                // Lose 1 heart
-        .active = true};
+        .active = true,
+        .can_move = true,
+        .velocity = {50.0f, 0.0f}, // Initial velocity (moving right)
+        .patrol_left_bound = 400.0f,
+        .patrol_right_bound = 800.0f,
+        .patrol_speed = 50.0f};
     hazard_list_add(&level.hazards, dust_storm);
 
     return level;

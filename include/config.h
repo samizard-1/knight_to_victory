@@ -12,7 +12,11 @@
 #define INITIAL_HEARTS 3
 
 // Game state settings
-#define PAUSE_DURATION 2.0f // Duration of pause after losing a heart or game over (in seconds)
+#define PAUSE_DURATION 2.0f             // Duration of pause after losing a heart (in seconds)
+#define DAMAGE_DISPLAY_MONSTER_HIT 0.5f // Duration to display monster hit texture (in seconds)
+#define DAMAGE_DISPLAY_FIRE 2.0f        // Duration to display fire damage texture (in seconds)
+#define DAMAGE_DISPLAY_DUST 2.0f        // Duration to display dust damage texture (in seconds)
+#define RESPAWN_DELAY PAUSE_DURATION    // Delay before respawning player to level start (in seconds)
 
 // Background settings
 #define MOUNTAIN_BASE_HEIGHT 500

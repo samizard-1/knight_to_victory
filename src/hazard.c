@@ -45,6 +45,49 @@ void hazard_list_add(HazardList *list, Hazard hazard)
     }
 }
 
+void hazard_update(Hazard *hazard)
+{
+    if (!hazard->active || !hazard->can_move)
+        return;
+
+    // Update position based on velocity (similar to monster patrol logic)
+    hazard->bounds.x += hazard->velocity.x * GetFrameTime();
+
+    // Patrol logic - bounce back and forth at boundaries
+    if (hazard->bounds.x <= hazard->patrol_left_bound)
+    {
+        hazard->bounds.x = hazard->patrol_left_bound;
+        hazard->velocity.x = hazard->patrol_speed; // Move right
+    }
+    else if (hazard->bounds.x >= hazard->patrol_right_bound)
+    {
+        hazard->bounds.x = hazard->patrol_right_bound;
+        hazard->velocity.x = -hazard->patrol_speed; // Move left
+    }
+}
+
+void hazard_init_movement(Hazard *hazard, float left_bound, float right_bound, float speed)
+{
+    // Set default movement properties based on hazard type
+    hazard->patrol_left_bound = left_bound;
+    hazard->patrol_right_bound = right_bound;
+    hazard->patrol_speed = speed;
+
+    // Determine if this hazard should move by default
+    switch (hazard->type)
+    {
+    case HAZARD_DUST_STORM:
+        hazard->can_move = true; // Dust storms move by default
+        hazard->velocity = (Vector2){speed, 0};
+        break;
+    case HAZARD_LAVA_PIT:
+    case HAZARD_SPIKE_TRAP:
+    default:
+        hazard->can_move = false; // Lava pits and spikes don't move by default
+        hazard->velocity = (Vector2){0, 0};
+        break;
+    }
+}
 bool hazard_check_collision(Hazard *hazard, Rectangle player_rect)
 {
     return CheckCollisionRecs(hazard->bounds, player_rect);
@@ -94,11 +137,11 @@ void hazard_draw(Hazard *hazard, float camera_x)
     {
         // Draw dust storm
         DrawTexturePro(hazard->texture,
-                           (Rectangle){0, 0, (float)hazard->texture.width, (float)hazard->texture.height},
-                           draw_rect,
-                           (Vector2){0, 0},
-                           0.0f,
-                           (Color){255, 255, 255, 150});
+                       (Rectangle){0, 0, (float)hazard->texture.width, (float)hazard->texture.height},
+                       draw_rect,
+                       (Vector2){0, 0},
+                       0.0f,
+                       (Color){255, 255, 255, 150});
         break;
     }
     }
