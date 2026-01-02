@@ -125,7 +125,7 @@ static void draw_goal_marker(Level *level, float camera_x)
 // Initialize levels for the game
 static void initialize_levels(GameState *state)
 {
-    state->level_count = 20;
+    state->level_count = 11;
 
     // Load levels from level definition files
     state->levels[0] = level1_create();
@@ -140,7 +140,7 @@ static void initialize_levels(GameState *state)
     state->levels[9] = level10_create();
     state->levels[10] = level11_create();
 
-    state->current_level_index = 10;
+    state->current_level_index = 0;
 }
 
 void game_init(GameState *state)
@@ -216,6 +216,12 @@ void game_update(GameState *state)
         return; // Don't process other updates during transition
     }
 
+    // Update all hazards (even when paused, so fade cycles continue)
+    for (int i = 0; i < current_level->hazards.count; i++)
+    {
+        hazard_update(&current_level->hazards.hazards[i]);
+    }
+
     // Update game objects (only if not paused)
     if (!state->is_paused)
     {
@@ -228,12 +234,6 @@ void game_update(GameState *state)
         for (int i = 0; i < current_level->monsters.count; i++)
         {
             monster_update(&current_level->monsters.monsters[i]);
-        }
-
-        // Update all hazards
-        for (int i = 0; i < current_level->hazards.count; i++)
-        {
-            hazard_update(&current_level->hazards.hazards[i]);
         }
 
         // Update dragon AI - make dragons fire at the player
@@ -300,9 +300,9 @@ void game_update(GameState *state)
         for (int i = 0; i < current_level->hazards.count; i++)
         {
             Hazard *hazard = &current_level->hazards.hazards[i];
-            if (hazard->active && hazard_check_collision(hazard, player_rect))
+            if (hazard->active && hazard_check_collision(hazard, player_rect) && hazard_is_dangerous(hazard))
             {
-                // Player hit a hazard
+                // Player hit a hazard (only if it's dangerous/not faded out)
                 player_take_damage(&player, hazard->damage);
 
                 // Apply damage type based on hazard type

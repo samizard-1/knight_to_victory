@@ -47,22 +47,63 @@ void hazard_list_add(HazardList *list, Hazard hazard)
 
 void hazard_update(Hazard *hazard)
 {
-    if (!hazard->active || !hazard->can_move)
+    if (!hazard->active)
         return;
 
-    // Update position based on velocity (similar to monster patrol logic)
-    hazard->bounds.x += hazard->velocity.x * GetFrameTime();
+    // Update movement
+    if (hazard->can_move)
+    {
+        // Update position based on velocity (similar to monster patrol logic)
+        hazard->bounds.x += hazard->velocity.x * GetFrameTime();
 
-    // Patrol logic - bounce back and forth at boundaries
-    if (hazard->bounds.x <= hazard->patrol_left_bound)
-    {
-        hazard->bounds.x = hazard->patrol_left_bound;
-        hazard->velocity.x = hazard->patrol_speed; // Move right
+        // Patrol logic - bounce back and forth at boundaries
+        if (hazard->bounds.x <= hazard->patrol_left_bound)
+        {
+            hazard->bounds.x = hazard->patrol_left_bound;
+            hazard->velocity.x = hazard->patrol_speed; // Move right
+        }
+        else if (hazard->bounds.x >= hazard->patrol_right_bound)
+        {
+            hazard->bounds.x = hazard->patrol_right_bound;
+            hazard->velocity.x = -hazard->patrol_speed; // Move left
+        }
     }
-    else if (hazard->bounds.x >= hazard->patrol_right_bound)
+
+    // Update fading
+    if (hazard->can_fade)
     {
-        hazard->bounds.x = hazard->patrol_right_bound;
-        hazard->velocity.x = -hazard->patrol_speed; // Move left
+        hazard->fade_timer += GetFrameTime();
+
+        float total_cycle_time = hazard->fade_in_duration + hazard->fade_out_duration + hazard->fade_out_interval;
+
+        // Wrap timer to cycle
+        if (hazard->fade_timer >= total_cycle_time)
+        {
+            hazard->fade_timer -= total_cycle_time;
+        }
+
+        // Determine current phase and opacity
+        float current_time = hazard->fade_timer;
+
+        if (current_time < hazard->fade_out_duration)
+        {
+            // Fading out phase
+            hazard->is_faded_out = true;
+            hazard->current_opacity = 1.0f - (current_time / hazard->fade_out_duration);
+        }
+        else if (current_time < hazard->fade_out_duration + hazard->fade_out_interval)
+        {
+            // Fully faded out phase
+            hazard->is_faded_out = true;
+            hazard->current_opacity = 0.0f;
+        }
+        else
+        {
+            // Fading in phase
+            hazard->is_faded_out = false;
+            float fade_in_time = current_time - (hazard->fade_out_duration + hazard->fade_out_interval);
+            hazard->current_opacity = fade_in_time / hazard->fade_in_duration;
+        }
     }
 }
 
@@ -88,6 +129,28 @@ void hazard_init_movement(Hazard *hazard, float left_bound, float right_bound, f
         break;
     }
 }
+
+void hazard_init_fade(Hazard *hazard, float fade_in_duration, float fade_out_duration, float fade_out_interval)
+{
+    hazard->can_fade = true;
+    hazard->fade_in_duration = fade_in_duration;
+    hazard->fade_out_duration = fade_out_duration;
+    hazard->fade_out_interval = fade_out_interval;
+    hazard->fade_timer = 0.0f;
+    hazard->current_opacity = 1.0f;
+    hazard->is_faded_out = false;
+}
+
+bool hazard_is_dangerous(Hazard *hazard)
+{
+    // Hazard is dangerous if it's not faded out
+    if (hazard->can_fade)
+    {
+        return !hazard->is_faded_out;
+    }
+    return true; // Non-fading hazards are always dangerous
+}
+
 bool hazard_check_collision(Hazard *hazard, Rectangle player_rect)
 {
     return CheckCollisionRecs(hazard->bounds, player_rect);
@@ -135,13 +198,14 @@ void hazard_draw(Hazard *hazard, float camera_x)
     }
     case HAZARD_DUST_STORM:
     {
-        // Draw dust storm
+        // Draw dust storm with opacity based on fade state
+        unsigned char alpha = (unsigned char)(hazard->current_opacity * 150.0f);
         DrawTexturePro(hazard->texture,
                        (Rectangle){0, 0, (float)hazard->texture.width, (float)hazard->texture.height},
                        draw_rect,
                        (Vector2){0, 0},
                        0.0f,
-                       (Color){255, 255, 255, 150});
+                       (Color){255, 255, 255, alpha});
         break;
     }
     }

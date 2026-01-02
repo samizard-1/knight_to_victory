@@ -23,11 +23,10 @@ Level level11_create(void)
         .variant = 10};
 
     LevelGoal goal = {
-        .type = GOAL_TYPE_HAZARDS,
-        .goal_position = {1000.0f, 538.0f},
+        .type = GOAL_TYPE_LOCATION,
+        .goal_position = {3000.0f, 538.0f},
         .goal_radius = 50.0f,
-        .hazards_to_defeat = 4,
-        .hazards_defeated = 0};
+    };
 
     Level level = level_create(
         11,                        // level number
@@ -47,8 +46,13 @@ Level level11_create(void)
         .velocity = {50.0f, 0.0f}, // Initial velocity (moving right)
         .patrol_left_bound = 400.0f,
         .patrol_right_bound = 800.0f,
-        .patrol_speed = 50.0f};
+        .patrol_speed = 50.0f,
+        .can_fade = false,
+        .fade_out_duration = 10.0f}; // Set to false initially
     hazard_list_add(&level.hazards, dust_storm);
+
+    // Initialize fade properties (2 sec fade out, 2 sec fade in, 1 sec visible gap)
+    hazard_init_fade(&level.hazards.hazards[0], 2.0f, 2.0f, 1.0f);
 
     return level;
 }
