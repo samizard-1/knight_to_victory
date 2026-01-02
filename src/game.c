@@ -174,7 +174,7 @@ void game_init(GameState *state)
 
     InitWindow(state->screen_width, state->screen_height, "Knight To Victory");
     SetTargetFPS(state->fps);
-    SetExitKey(KEY_NULL);  // Disable default ESC-to-close behavior so we can handle ESC for pause menu
+    SetExitKey(KEY_NULL); // Disable default ESC-to-close behavior so we can handle ESC for pause menu
 
     // Load menu cursor texture (character.png)
     state->menu_cursor_texture = LoadTexture(get_asset_path("character.png"));
