@@ -32,6 +32,8 @@ add_executable(game
     src/level9.c
     src/level10.c
     src/level11.c
+    src/level12.c
+    src/level13.c
 )
 
 # Link raylib

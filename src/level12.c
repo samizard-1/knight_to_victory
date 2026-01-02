@@ -15,12 +15,12 @@
  * TODO: Add hazard definitions here
  */
 
-Level level11_create(void)
+Level level12_create(void)
 {
     // Define the background for this level (variant 5 creates the final terrain)
     BackgroundConfig background = {
         .type = BG_TYPE_PROCEDURAL,
-        .variant = 10};
+        .variant = 11};
 
     LevelGoal goal = {
         .type = GOAL_TYPE_LOCATION,
@@ -29,8 +29,8 @@ Level level11_create(void)
     };
 
     Level level = level_create(
-        11,                        // level number
-        "Desert of Wind",               // level name
+        12,                        // level number
+        "Desert of Blinding Sand",               // level name
         background,                // background configuration
         (Vector2){100.0f, 400.0f}, // player start position
         goal                       // level goal
@@ -39,14 +39,14 @@ Level level11_create(void)
     // Add dust storm hazard
     Hazard dust_storm = {
         .type = HAZARD_DUST_STORM,
-        .bounds = {500.0f, 500.0f, 150.0f, 100.0f}, // x, y, width, height (below ground)
+        .bounds = {500.0f, 300.0f, 160.0f, 300.0f}, // x, y, width, height (below ground)
         .damage = 1,                                // Lose 1 heart
         .active = true,
         .can_move = true,
         .velocity = {50.0f, 0.0f}, // Initial velocity (moving right)
         .patrol_left_bound = 400.0f,
         .patrol_right_bound = 800.0f,
-        .patrol_speed = 50.0f,
+        .patrol_speed = 70.0f,
         .can_fade = false}; // Set to false initially
     hazard_list_add(&level.hazards, dust_storm);
 
@@ -55,14 +55,14 @@ Level level11_create(void)
         
     Hazard dust_storm2 = {
         .type = HAZARD_DUST_STORM,
-        .bounds = {500.0f, 500.0f, 150.0f, 100.0f}, // x, y, width, height (below ground)
+        .bounds = {500.0f, 300.0f, 160.0f, 300.0f}, // x, y, width, height (below ground)
         .damage = 1,                                // Lose 1 heart
         .active = true,
         .can_move = true,
         .velocity = {50.0f, 0.0f}, // Initial velocity (moving right)
         .patrol_left_bound = 800.0f,
         .patrol_right_bound = 1200.0f,
-        .patrol_speed = 50.0f,
+        .patrol_speed = 80.0f,
         .can_fade = false}; // Set to false initially
     hazard_list_add(&level.hazards, dust_storm2);
 
@@ -71,19 +71,35 @@ Level level11_create(void)
 
         Hazard dust_storm3 = {
         .type = HAZARD_DUST_STORM,
-        .bounds = {500.0f, 500.0f, 150.0f, 100.0f}, // x, y, width, height (below ground)
+        .bounds = {500.0f, 300.0f, 160.0f, 300.0f}, // x, y, width, height (below ground)
         .damage = 1,                                // Lose 1 heart
         .active = true,
         .can_move = true,
         .velocity = {50.0f, 0.0f}, // Initial velocity (moving right)
-        .patrol_left_bound = 1200.0f,
-        .patrol_right_bound = 1600.0f,
-        .patrol_speed = 50.0f,
+        .patrol_left_bound = 1300.0f,
+        .patrol_right_bound = 1700.0f,
+        .patrol_speed = 60.0f,
         .can_fade = false}; // Set to false initially
     hazard_list_add(&level.hazards, dust_storm3);
 
     // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
     hazard_init_fade(&level.hazards.hazards[2], 0.0f, 2.0f, 1.0f, 5.0f);
+
+            Hazard dust_storm4 = {
+        .type = HAZARD_DUST_STORM,
+        .bounds = {500.0f, 300.0f, 160.0f, 300.0f}, // x, y, width, height (below ground)
+        .damage = 1,                                // Lose 1 heart
+        .active = true,
+        .can_move = true,
+        .velocity = {50.0f, 0.0f}, // Initial velocity (moving right)
+        .patrol_left_bound = 1800.0f,
+        .patrol_right_bound = 2200.0f,
+        .patrol_speed = 70.0f,
+        .can_fade = false}; // Set to false initially
+    hazard_list_add(&level.hazards, dust_storm4);
+
+    // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
+    hazard_init_fade(&level.hazards.hazards[3], 0.0f, 2.0f, 1.0f, 5.0f);
 
     return level;
 }

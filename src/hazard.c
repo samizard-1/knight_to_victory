@@ -39,6 +39,11 @@ void hazard_list_add(HazardList *list, Hazard hazard)
         hazard.texture = LoadTexture(get_asset_path("dust_tornado.png"));
     }
 
+    if (hazard.type == HAZARD_LAVA_JET && hazard.texture.id == 0)
+    {
+        hazard.texture = LoadTexture(get_asset_path("lava_jet.png"));
+    }
+
     if (list->count < list->capacity)
     {
         list->hazards[list->count++] = hazard;
@@ -74,7 +79,7 @@ void hazard_update(Hazard *hazard)
     {
         hazard->fade_timer += GetFrameTime();
 
-        float total_cycle_time = hazard->fade_in_duration + hazard->fade_out_duration + hazard->fade_out_interval;
+        float total_cycle_time = hazard->fade_opaque_duration + hazard->fade_out_duration + hazard->fade_out_interval + hazard->fade_in_duration;
 
         // Wrap timer to cycle
         if (hazard->fade_timer >= total_cycle_time)
@@ -85,13 +90,20 @@ void hazard_update(Hazard *hazard)
         // Determine current phase and opacity
         float current_time = hazard->fade_timer;
 
-        if (current_time < hazard->fade_out_duration)
+        if (current_time < hazard->fade_opaque_duration)
+        {
+            // Fully opaque phase
+            hazard->is_faded_out = false;
+            hazard->current_opacity = 1.0f;
+        }
+        else if (current_time < hazard->fade_opaque_duration + hazard->fade_out_duration)
         {
             // Fading out phase
             hazard->is_faded_out = true;
-            hazard->current_opacity = 1.0f - (current_time / hazard->fade_out_duration);
+            float fade_out_time = current_time - hazard->fade_opaque_duration;
+            hazard->current_opacity = 1.0f - (fade_out_time / hazard->fade_out_duration);
         }
-        else if (current_time < hazard->fade_out_duration + hazard->fade_out_interval)
+        else if (current_time < hazard->fade_opaque_duration + hazard->fade_out_duration + hazard->fade_out_interval)
         {
             // Fully faded out phase
             hazard->is_faded_out = true;
@@ -101,7 +113,7 @@ void hazard_update(Hazard *hazard)
         {
             // Fading in phase
             hazard->is_faded_out = false;
-            float fade_in_time = current_time - (hazard->fade_out_duration + hazard->fade_out_interval);
+            float fade_in_time = current_time - (hazard->fade_opaque_duration + hazard->fade_out_duration + hazard->fade_out_interval);
             hazard->current_opacity = fade_in_time / hazard->fade_in_duration;
         }
     }
@@ -127,15 +139,20 @@ void hazard_init_movement(Hazard *hazard, float left_bound, float right_bound, f
         hazard->can_move = false; // Lava pits and spikes don't move by default
         hazard->velocity = (Vector2){0, 0};
         break;
+    case HAZARD_LAVA_JET:
+        hazard->can_move = false; // Lava jets don't move by default
+        hazard->velocity = (Vector2){0, 0};
+        break;
     }
 }
 
-void hazard_init_fade(Hazard *hazard, float fade_in_duration, float fade_out_duration, float fade_out_interval)
+void hazard_init_fade(Hazard *hazard, float fade_opaque_duration, float fade_out_duration, float fade_out_interval, float fade_in_duration)
 {
     hazard->can_fade = true;
-    hazard->fade_in_duration = fade_in_duration;
+    hazard->fade_opaque_duration = fade_opaque_duration;
     hazard->fade_out_duration = fade_out_duration;
     hazard->fade_out_interval = fade_out_interval;
+    hazard->fade_in_duration = fade_in_duration;
     hazard->fade_timer = 0.0f;
     hazard->current_opacity = 1.0f;
     hazard->is_faded_out = false;
@@ -199,6 +216,17 @@ void hazard_draw(Hazard *hazard, float camera_x)
     case HAZARD_DUST_STORM:
     {
         // Draw dust storm with opacity based on fade state
+        unsigned char alpha = (unsigned char)(hazard->current_opacity * 150.0f);
+        DrawTexturePro(hazard->texture,
+                       (Rectangle){0, 0, (float)hazard->texture.width, (float)hazard->texture.height},
+                       draw_rect,
+                       (Vector2){0, 0},
+                       0.0f,
+                       (Color){255, 255, 255, alpha});
+        break;
+    }
+    case HAZARD_LAVA_JET:
+    {
         unsigned char alpha = (unsigned char)(hazard->current_opacity * 150.0f);
         DrawTexturePro(hazard->texture,
                        (Rectangle){0, 0, (float)hazard->texture.width, (float)hazard->texture.height},

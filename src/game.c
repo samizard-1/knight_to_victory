@@ -125,7 +125,7 @@ static void draw_goal_marker(Level *level, float camera_x)
 // Initialize levels for the game
 static void initialize_levels(GameState *state)
 {
-    state->level_count = 11;
+    state->level_count = 13;
 
     // Load levels from level definition files
     state->levels[0] = level1_create();
@@ -139,8 +139,10 @@ static void initialize_levels(GameState *state)
     state->levels[8] = level9_create();
     state->levels[9] = level10_create();
     state->levels[10] = level11_create();
+    state->levels[11] = level12_create();
+    state->levels[12] = level13_create();
 
-    state->current_level_index = 0;
+    state->current_level_index = 9;
 }
 
 void game_init(GameState *state)
@@ -322,6 +324,10 @@ void game_update(GameState *state)
                 case HAZARD_SPIKE_TRAP:
                     damage_type = DAMAGE_TYPE_MONSTER_HIT; // Spikes feel like sharp impacts
                     damage_duration = DAMAGE_DISPLAY_MONSTER_HIT;
+                    break;
+                case HAZARD_LAVA_JET:
+                    damage_type = DAMAGE_TYPE_FIRE;
+                    damage_duration = DAMAGE_DISPLAY_FIRE;
                     break;
                 }
 

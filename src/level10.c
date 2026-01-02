@@ -30,8 +30,8 @@ Level level10_create(void)
         .monsters_defeated = 0};
 
     Level level = level_create(
-        9,                         // level number
-        "The Dragon's Guards",     // level name
+        2,                         // level number
+        "Dragokiz the Dreaded",     // level name
         background,                // background configuration
         (Vector2){100.0f, 400.0f}, // player start position
         goal                       // level goal
