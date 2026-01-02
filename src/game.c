@@ -169,9 +169,12 @@ void game_init(GameState *state)
     state->current_screen = GAME_SCREEN_TITLE;
     state->selected_menu_item = 1; // Start on "Start Game" menu item
     state->selected_level = 0;     // Default to Level 1 (index 0)
+    state->pause_menu_active = false;
+    state->pause_menu_selection = 0;
 
-    InitWindow(state->screen_width, state->screen_height, "Side-Scrolling Game");
+    InitWindow(state->screen_width, state->screen_height, "Knight To Victory");
     SetTargetFPS(state->fps);
+    SetExitKey(KEY_NULL);  // Disable default ESC-to-close behavior so we can handle ESC for pause menu
 
     // Load menu cursor texture (character.png)
     state->menu_cursor_texture = LoadTexture(get_asset_path("character.png"));
@@ -304,8 +307,8 @@ void game_update(GameState *state)
         hazard_update(&current_level->hazards.hazards[i]);
     }
 
-    // Update game objects (only if not paused)
-    if (!state->is_paused)
+    // Update game objects (only if not paused and pause menu is not active)
+    if (!state->is_paused && !state->pause_menu_active)
     {
         player_handle_input(&player);
         player_update_with_hazards(&player, &current_level->hazards);
@@ -590,24 +593,24 @@ void game_update(GameState *state)
         }
     }
 
-    // Update hazard cooldown
-    if (state->hazard_cooldown > 0.0f)
+    // Update hazard cooldown (skip if pause menu is active)
+    if (state->hazard_cooldown > 0.0f && !state->pause_menu_active)
     {
         state->hazard_cooldown -= state->delta_time;
     }
 
-    // update sword attack cooldown
-    if (state->sword_attack_cooldown > 0.0f)
+    // update sword attack cooldown (skip if pause menu is active)
+    if (state->sword_attack_cooldown > 0.0f && !state->pause_menu_active)
     {
         state->sword_attack_cooldown -= state->delta_time;
     }
 
-    // Update burnt message timer
-    if (state->burnt_message_timer > 0.0f)
+    // Update burnt message timer (skip if pause menu is active)
+    if (state->burnt_message_timer > 0.0f && !state->pause_menu_active)
     {
         state->burnt_message_timer -= state->delta_time;
     }
-    else if (state->is_paused)
+    else if (state->is_paused && !state->pause_menu_active)
     {
         // Timer expired, resume game and respawn
         state->is_paused = false;
@@ -691,7 +694,52 @@ void game_update(GameState *state)
     // Check for exit
     if (IsKeyPressed(KEY_ESCAPE) && state->current_screen != GAME_SCREEN_TITLE && !state->game_victory)
     {
-        state->running = false;
+        if (state->current_screen == GAME_SCREEN_PLAYING)
+        {
+            // Toggle pause menu during gameplay
+            state->pause_menu_active = !state->pause_menu_active;
+            state->pause_menu_selection = 0; // Reset to "Resume Game" when opening
+        }
+    }
+
+    // Handle pause menu navigation
+    if (state->pause_menu_active && state->current_screen == GAME_SCREEN_PLAYING)
+    {
+        if (IsKeyPressed(KEY_UP))
+        {
+            state->pause_menu_selection = (state->pause_menu_selection - 1 + 2) % 2;
+        }
+        else if (IsKeyPressed(KEY_DOWN))
+        {
+            state->pause_menu_selection = (state->pause_menu_selection + 1) % 2;
+        }
+
+        if (IsKeyPressed(KEY_ENTER))
+        {
+            if (state->pause_menu_selection == 0)
+            {
+                // Resume Game
+                state->pause_menu_active = false;
+            }
+            else if (state->pause_menu_selection == 1)
+            {
+                // Quit To Menu - reset all levels and return to title
+                state->current_screen = GAME_SCREEN_TITLE;
+                state->pause_menu_active = false;
+                state->selected_menu_item = 1; // Default to "Start Game"
+                state->selected_level = 0;     // Reset to level 1
+                state->current_level_index = 0;
+                state->game_over = false;
+                state->is_paused = false;
+
+                // Reactivate all enemies for next playthrough
+                for (int i = 0; i < state->level_count; i++)
+                {
+                    level_reactivate_enemies(&state->levels[i]);
+                    level_reset(&state->levels[i]);
+                }
+            }
+        }
     }
 }
 
@@ -923,6 +971,64 @@ static void draw_title_screen(GameState *state)
     DrawText(instructions, instr_x, instr_y, 16, LIGHTGRAY);
 }
 
+// Helper function to draw pause menu
+static void draw_pause_menu(GameState *state)
+{
+    int screen_width = state->screen_width;
+    int screen_height = state->screen_height;
+
+    // Draw semi-transparent overlay
+    DrawRectangle(0, 0, screen_width, screen_height, (Color){0, 0, 0, 150});
+
+    // Draw title
+    const char *title_text = "Game Paused";
+    int title_width = MeasureText(title_text, 60);
+    int title_x = (screen_width - title_width) / 2;
+    int title_y = screen_height / 2 - 100;
+
+    // Draw title with shadow
+    DrawText(title_text, title_x - 2, title_y - 2, 60, BLACK);
+    DrawText(title_text, title_x + 2, title_y + 2, 60, BLACK);
+    DrawText(title_text, title_x, title_y, 60, YELLOW);
+
+    // Menu items
+    const char *menu_items[2] = {"Resume Game", "Quit To Menu"};
+    float menu_start_y = screen_height / 2 + 20;
+    float menu_item_height = 70.0f;
+    float character_offset_x = -180.0f; // Offset to the left of menu items
+
+    // Draw menu items
+    for (int i = 0; i < 2; i++)
+    {
+        float item_y = menu_start_y + (i * menu_item_height);
+        int text_width = MeasureText(menu_items[i], 40);
+        int text_x = (screen_width - text_width) / 2;
+
+        // Highlight selected item
+        Color text_color = (i == state->pause_menu_selection) ? YELLOW : WHITE;
+        DrawText(menu_items[i], text_x, (int)item_y, 40, text_color);
+
+        // Draw character cursor for selected item
+        if (i == state->pause_menu_selection && state->menu_cursor_texture.width > 0)
+        {
+            float cursor_x = text_x + character_offset_x;
+            float cursor_y = item_y;
+            float cursor_size = 40.0f;
+
+            Rectangle source = {0, 0, (float)state->menu_cursor_texture.width, (float)state->menu_cursor_texture.height};
+            Rectangle dest = {cursor_x, cursor_y, cursor_size, cursor_size};
+            DrawTexturePro(state->menu_cursor_texture, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
+        }
+    }
+
+    // Draw instructions
+    const char *instructions = "Press UP/DOWN to navigate, ENTER to select";
+    int instr_width = MeasureText(instructions, 16);
+    int instr_x = (screen_width - instr_width) / 2;
+    int instr_y = screen_height - 40;
+    DrawText(instructions, instr_x, instr_y, 16, LIGHTGRAY);
+}
+
 void game_draw(GameState *state)
 {
     BeginDrawing();
@@ -1025,6 +1131,12 @@ void game_draw(GameState *state)
 
     // Draw debug info
     DrawFPS(10, 10);
+
+    // Draw pause menu if active
+    if (state->pause_menu_active && state->current_screen == GAME_SCREEN_PLAYING)
+    {
+        draw_pause_menu(state);
+    }
 
     EndDrawing();
 }

@@ -12,8 +12,16 @@ int main(void)
     game_init(&game_state);
 
     // Main game loop
-    while (!WindowShouldClose() && game_state.running)
+    // We use game_state.running as the primary exit condition to allow ESC to be handled by our pause menu
+    // However, we still check WindowShouldClose() which will be set by the window close button (X)
+    while (game_state.running)
     {
+        // Check if user clicked the window close button
+        if (WindowShouldClose())
+        {
+            game_state.running = false;
+        }
+
         // Update
         game_update(&game_state);
 

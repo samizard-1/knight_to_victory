@@ -44,9 +44,11 @@ typedef struct
     float victory_timer;               // Timer for victory animation
     float elapsed_time;                // Total elapsed time in seconds
     GameScreen current_screen;         // Current screen being displayed (TITLE, PLAYING, VICTORY)
-    int selected_menu_item;            // 0 = Select Level, 1 = Start Game, 2 = Exit
+    int selected_menu_item;            // 0 = Select Level, 1 = Start Game, 2 = Exit (title) | 0 = Resume, 1 = Quit (pause)
     int selected_level;                // 0-13 corresponds to level 1-14
     Texture2D menu_cursor_texture;     // Character texture used as menu cursor
+    bool pause_menu_active;            // True when pause menu is displayed during gameplay
+    int pause_menu_selection;          // 0 = Resume Game, 1 = Quit To Menu
 } GameState;
 
 // Game functions
