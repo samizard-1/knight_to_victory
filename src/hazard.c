@@ -15,14 +15,9 @@ HazardList hazard_list_create(int capacity)
 
 void hazard_list_cleanup(HazardList *list)
 {
-    for (int i = 0; i < list->count; i++)
-    {
-        if (list->hazards[i].texture.id != 0)
-        {
-            UnloadTexture(list->hazards[i].texture);
-        }
-    }
-
+    // Note: Textures are cached statically and managed globally, not per-list
+    // So we don't unload them here to avoid double-unload issues
+    
     if (list->hazards != NULL)
     {
         free(list->hazards);
@@ -34,14 +29,42 @@ void hazard_list_cleanup(HazardList *list)
 
 void hazard_list_add(HazardList *list, Hazard hazard)
 {
-    if (hazard.type == HAZARD_DUST_STORM && hazard.texture.id == 0)
+    // Cache textures by type to avoid loading the same texture multiple times
+    static Texture2D dust_storm_texture = {0};
+    static Texture2D lava_jet_texture = {0};
+    static Texture2D wind_daggers_texture = {0};
+    
+    if (hazard.texture.id == 0)
     {
-        hazard.texture = LoadTexture(get_asset_path("dust_tornado.png"));
-    }
-
-    if (hazard.type == HAZARD_LAVA_JET && hazard.texture.id == 0)
-    {
-        hazard.texture = LoadTexture(get_asset_path("lava_jet.png"));
+        switch (hazard.type)
+        {
+        case HAZARD_DUST_STORM:
+            if (dust_storm_texture.id == 0)
+            {
+                dust_storm_texture = LoadTexture(get_asset_path("dust_tornado.png"));
+            }
+            hazard.texture = dust_storm_texture;
+            break;
+        case HAZARD_LAVA_JET:
+            if (lava_jet_texture.id == 0)
+            {
+                lava_jet_texture = LoadTexture(get_asset_path("lava_jet.png"));
+            }
+            hazard.texture = lava_jet_texture;
+            break;
+        case HAZARD_WIND_DAGGERS:
+            if (wind_daggers_texture.id == 0)
+            {
+                wind_daggers_texture = LoadTexture(get_asset_path("wind_daggers.png"));
+            }
+            hazard.texture = wind_daggers_texture;
+            break;
+        case HAZARD_LAVA_PIT:
+        case HAZARD_SPIKE_TRAP:
+        default:
+            // These don't use textures
+            break;
+        }
     }
 
     if (list->count < list->capacity)
@@ -143,6 +166,10 @@ void hazard_init_movement(Hazard *hazard, float left_bound, float right_bound, f
         hazard->can_move = false; // Lava jets don't move by default
         hazard->velocity = (Vector2){0, 0};
         break;
+    case HAZARD_WIND_DAGGERS:
+        hazard->can_move = true;
+        hazard->velocity = (Vector2){speed, 0};
+        break;
     }
 }
 
@@ -234,6 +261,16 @@ void hazard_draw(Hazard *hazard, float camera_x)
                        (Vector2){0, 0},
                        0.0f,
                        (Color){255, 255, 255, alpha});
+        break;
+    }
+    case HAZARD_WIND_DAGGERS:
+    {
+        DrawTexturePro(hazard->texture,
+                       (Rectangle){0, 0, (float)hazard->texture.width, (float)hazard->texture.height},
+                       draw_rect,
+                       (Vector2){0, 0},
+                       0.0f,
+                       (Color){255, 255, 255, 255});
         break;
     }
     }

@@ -25,6 +25,8 @@ Player player_create(float x, float y)
     p.dust_flipleft_texture = LoadTexture(get_asset_path("blood_sand_flipleft.png"));
     p.sword_texture = LoadTexture(get_asset_path("sword.png"));
     p.sword_flipleft_texture = LoadTexture(get_asset_path("sword_flipleft.png"));
+    p.ducking_texture = LoadTexture(get_asset_path("dodging_character.png"));
+    p.ducking_flipleft_texture = LoadTexture(get_asset_path("dodging_character_flipleft.png"));
     p.sword_hitbox = (Rectangle){0, 0, 20, 40}; // Example sword hitbox size
     p.scale = 0.06f;                            // Scale down smaller
     p.width = (float)p.texture.width * p.scale;
@@ -86,9 +88,18 @@ void player_handle_input(Player *player)
     {
         player->is_using_sword = false;
     }
+    if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN))
+    {
+        player->is_ducking = true;
+    }
+    else
+    {
+        player->is_ducking = false;
+    }
+    
 
     // Jumping
-    if ((IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP)) && !player->is_jumping)
+    if ((IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP)) && !player->is_jumping && !player->is_ducking)
     {
         player->velocity.y = -player->jump_power;
         player->is_jumping = true;
@@ -225,6 +236,9 @@ void player_draw(Player *player, float camera_x)
     Texture2D texture_to_draw = player->texture;
     float draw_scale = player->scale;
 
+    // set default player height
+    player->height = (float)player->texture.height * player->scale;
+
     if (player->is_dead)
     {
         texture_to_draw = player->dead_texture;
@@ -306,6 +320,32 @@ void player_draw(Player *player, float camera_x)
             float height_difference = damage_height - original_height;
             screen_pos.y -= (height_difference * (1.0f + display_props.y_offset));
         }
+    }
+    else if (player->is_ducking)
+    {
+
+        draw_scale = player->scale * 1.3f; // Draw ducking texture 1.5x larger
+
+        // Use ducking texture
+        if (player->facing_direction == 1)
+        {
+            texture_to_draw = player->ducking_texture;
+        }
+        else
+        {
+            texture_to_draw = player->ducking_flipleft_texture;
+            if (texture_to_draw.id == 0)
+            {
+                texture_to_draw = player->ducking_texture;
+            }
+        }
+        // // Adjust Y position so ducking texture sits on ground instead of floating
+        // float original_height = (float)player->texture.height * player->scale;
+        float ducking_height = (float)player->ducking_texture.height * draw_scale;
+        // screen_pos.y -= (ducking_height - original_height);
+
+        // adjust player height for ducking
+        player->height = ducking_height;
     }
     else if (player->facing_direction == -1)
     {
@@ -439,6 +479,14 @@ void player_cleanup(Player *player)
     if (player->dead_texture.id > 0)
     {
         UnloadTexture(player->dead_texture);
+    }
+    if (player->ducking_texture.id > 0)
+    {
+        UnloadTexture(player->ducking_texture);
+    }
+    if (player->ducking_flipleft_texture.id > 0)
+    {
+        UnloadTexture(player->ducking_flipleft_texture);
     }
     UnloadTexture(player->filled_heart_texture);
     UnloadTexture(player->empty_heart_texture);

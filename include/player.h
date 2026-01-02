@@ -27,6 +27,8 @@ typedef struct
     Texture2D fireball_texture;
     Texture2D sword_texture;
     Texture2D sword_flipleft_texture;
+    Texture2D ducking_texture;
+    Texture2D ducking_flipleft_texture;
     Rectangle sword_hitbox;
     float scale;
     int hearts;
@@ -37,7 +39,9 @@ typedef struct
     int projectile_inventory;      // Number of projectiles currently available
     int max_projectiles;           // Maximum projectiles player can carry
     int facing_direction;          // 1 for right, -1 for left
-    bool is_using_sword;           // True when player is using sword attack
+    bool is_using_sword;
+    bool is_ducking;           // True when player is using sword attack
+
 } Player;
 
 // Player functions

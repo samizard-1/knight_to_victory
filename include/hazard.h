@@ -8,7 +8,8 @@ typedef enum
     HAZARD_LAVA_PIT,
     HAZARD_SPIKE_TRAP,
     HAZARD_DUST_STORM,
-    HAZARD_LAVA_JET
+    HAZARD_LAVA_JET,
+    HAZARD_WIND_DAGGERS
 } HazardType;
 
 typedef struct
