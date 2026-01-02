@@ -9,8 +9,10 @@
 #include "pickup.h"
 #include "config.h"
 #include "dragon.h"
+#include "asset_paths.h"
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 static Player player;
 static Background background;
@@ -143,7 +145,6 @@ static void initialize_levels(GameState *state)
     state->levels[12] = level13_create();
     state->levels[13] = level14_create();
 
-
     state->current_level_index = 0;
 }
 
@@ -165,9 +166,15 @@ void game_init(GameState *state)
     state->game_victory = false;
     state->victory_timer = 0.0f;
     state->elapsed_time = 0.0f;
+    state->current_screen = GAME_SCREEN_TITLE;
+    state->selected_menu_item = 1; // Start on "Start Game" menu item
+    state->selected_level = 0;     // Default to Level 1 (index 0)
 
     InitWindow(state->screen_width, state->screen_height, "Side-Scrolling Game");
     SetTargetFPS(state->fps);
+
+    // Load menu cursor texture (character.png)
+    state->menu_cursor_texture = LoadTexture(get_asset_path("character.png"));
 
     // Initialize levels
     initialize_levels(state);
@@ -181,6 +188,77 @@ void game_init(GameState *state)
 void game_update(GameState *state)
 {
     state->delta_time = GetFrameTime();
+
+    // Handle title screen
+    if (state->current_screen == GAME_SCREEN_TITLE)
+    {
+        // Update background animation even on title screen
+        background_update(&background, (Vector2){0, 0});
+
+        // Menu navigation
+        if (IsKeyPressed(KEY_UP))
+        {
+            state->selected_menu_item = (state->selected_menu_item - 1 + 3) % 3;
+        }
+        else if (IsKeyPressed(KEY_DOWN))
+        {
+            state->selected_menu_item = (state->selected_menu_item + 1) % 3;
+        }
+
+        // Level selection with LEFT/RIGHT when on level selector
+        if (state->selected_menu_item == 0)
+        {
+            if (IsKeyPressed(KEY_LEFT))
+            {
+                state->selected_level = (state->selected_level - 1 + state->level_count) % state->level_count;
+            }
+            else if (IsKeyPressed(KEY_RIGHT))
+            {
+                state->selected_level = (state->selected_level + 1) % state->level_count;
+            }
+        }
+
+        // Menu selection
+        if (IsKeyPressed(KEY_ENTER))
+        {
+            if (state->selected_menu_item == 1)
+            {
+                // Start Game - use selected_level instead of 0
+                state->current_screen = GAME_SCREEN_PLAYING;
+                state->current_level_index = state->selected_level;
+                state->game_over = false;
+                state->game_victory = false;
+                state->elapsed_time = 0.0f;
+                state->is_paused = false;
+
+                // Reset player and level
+                Level *level = &state->levels[state->selected_level];
+                player.position = level->player_start_position;
+                player.velocity = (Vector2){0, 0};
+                player.hearts = player.max_hearts;
+                player.is_dead = false;
+                player_clear_damage_type(&player);
+                player.projectile_inventory = 0;
+
+                // Reactivate all enemies in all levels
+                for (int i = 0; i < state->level_count; i++)
+                {
+                    level_reactivate_enemies(&state->levels[i]);
+                    level_reset(&state->levels[i]);
+                }
+
+                // Reinitialize background
+                background_cleanup(&background);
+                background = background_create_with_variant(level->background.variant);
+            }
+            else if (state->selected_menu_item == 2)
+            {
+                // Exit Game
+                state->running = false;
+            }
+        }
+        return;
+    }
 
     // Increment elapsed time (always, even when paused, to track total play time)
     if (!state->game_over && !state->game_victory)
@@ -543,33 +621,26 @@ void game_update(GameState *state)
     // Update game over timer
     if (state->game_over)
     {
-        // When burnt message timer expires and game is over, restart to level 1
+        // When burnt message timer expires and game is over, return to title screen
         if (state->burnt_message_timer <= 0.0f)
         {
-            // Restart from level 1 - reset all levels and player state
-            state->current_level_index = 0;
+            // Return to title screen
+            state->current_screen = GAME_SCREEN_TITLE;
             state->game_over = false;
-            state->hazard_cooldown = 0.0f; // Reset cooldown to allow immediate damage detection
+            state->selected_menu_item = 1; // Default to "Start Game"
+            state->selected_level = 0;     // Reset to level 1
+            state->hazard_cooldown = 0.0f;
             player.hearts = player.max_hearts;
             player.is_dead = false;
-            player_clear_damage_type(&player); // Clear any active damage effects
-            player.projectile_inventory = 0;   // Reset inventory on game over
+            player_clear_damage_type(&player);
+            player.projectile_inventory = 0;
 
-            // Reactivate all enemies (monsters and hazards) in all levels
+            // Reactivate all enemies for next playthrough
             for (int i = 0; i < state->level_count; i++)
             {
                 level_reactivate_enemies(&state->levels[i]);
                 level_reset(&state->levels[i]);
             }
-
-            // Reset to level 1
-            Level *level1 = &state->levels[0];
-            player.position = level1->player_start_position;
-            player.velocity = (Vector2){0, 0};
-
-            // Reinitialize background
-            background_cleanup(&background);
-            background = background_create_with_variant(level1->background.variant);
         }
     }
 
@@ -597,14 +668,28 @@ void game_update(GameState *state)
     if (state->game_victory)
     {
         state->victory_timer += state->delta_time;
-        if (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER))
+        if (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE))
         {
-            state->running = false;
+            // Return to title screen after victory
+            state->current_screen = GAME_SCREEN_TITLE;
+            state->game_victory = false;
+            state->selected_menu_item = 1; // Default to "Start Game"
+            state->selected_level = 0;     // Reset to level 1
+            state->current_level_index = 0;
+            state->victory_timer = 0.0f;
+            state->is_paused = false;
+
+            // Reactivate all enemies for next playthrough
+            for (int i = 0; i < state->level_count; i++)
+            {
+                level_reactivate_enemies(&state->levels[i]);
+                level_reset(&state->levels[i]);
+            }
         }
     }
 
     // Check for exit
-    if (IsKeyPressed(KEY_ESCAPE))
+    if (IsKeyPressed(KEY_ESCAPE) && state->current_screen != GAME_SCREEN_TITLE && !state->game_victory)
     {
         state->running = false;
     }
@@ -722,10 +807,134 @@ static void draw_level_transition_screen(GameState *state)
     DrawText(continue_text, continue_x, screen_height / 2 + 90, 20, LIGHTGRAY);
 }
 
+// Helper function to draw title/menu screen
+static void draw_title_screen(GameState *state)
+{
+    int screen_width = state->screen_width;
+    int screen_height = state->screen_height;
+
+    // Draw procedural background (same as gameplay)
+    background_draw(&background);
+
+    // Draw semi-transparent overlay for better text visibility
+    DrawRectangle(0, 0, screen_width, screen_height, (Color){0, 0, 0, 120});
+
+    // Draw title
+    const char *title_text = "Knight To Victory";
+    int title_width = MeasureText(title_text, 80);
+    int title_x = (screen_width - title_width) / 2;
+    int title_y = screen_height / 2 - 150;
+
+    // Draw title with shadow effect
+    DrawText(title_text, title_x - 2, title_y - 2, 80, BLACK);
+    DrawText(title_text, title_x + 2, title_y + 2, 80, BLACK);
+    DrawText(title_text, title_x, title_y, 80, GOLD);
+
+    // Menu items
+    float menu_start_y = screen_height / 2 + 20;
+    float menu_item_height = 70.0f;
+    float character_offset_x = -200.0f; // Offset to the left of menu items
+
+    // Draw menu items
+    // Item 0: Select Level
+    {
+        float item_y = menu_start_y;
+        char level_text[50];
+        snprintf(level_text, sizeof(level_text), "Select Level: %d", state->selected_level + 1);
+        int text_width = MeasureText(level_text, 40);
+        int text_x = (screen_width - text_width) / 2;
+
+        Color text_color = (0 == state->selected_menu_item) ? YELLOW : WHITE;
+        DrawText(level_text, text_x, (int)item_y, 40, text_color);
+
+        // Draw character cursor for selected item
+        if (0 == state->selected_menu_item && state->menu_cursor_texture.width > 0)
+        {
+            float cursor_x = text_x + character_offset_x;
+            float cursor_y = item_y;
+            float cursor_size = 40.0f;
+
+            Rectangle source = {0, 0, (float)state->menu_cursor_texture.width, (float)state->menu_cursor_texture.height};
+            Rectangle dest = {cursor_x, cursor_y, cursor_size, cursor_size};
+            DrawTexturePro(state->menu_cursor_texture, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
+        }
+
+        // Draw left/right navigation hint for level selector
+        if (0 == state->selected_menu_item)
+        {
+            const char *nav_hint = "(LEFT/RIGHT to change level)";
+            int hint_width = MeasureText(nav_hint, 16);
+            int hint_x = (screen_width - hint_width) / 2;
+            DrawText(nav_hint, hint_x, (int)(item_y + 45), 16, LIGHTGRAY);
+        }
+    }
+
+    // Item 1: Start Game
+    {
+        float item_y = menu_start_y + menu_item_height;
+        const char *menu_text = "Start Game";
+        int text_width = MeasureText(menu_text, 40);
+        int text_x = (screen_width - text_width) / 2;
+
+        Color text_color = (1 == state->selected_menu_item) ? YELLOW : WHITE;
+        DrawText(menu_text, text_x, (int)item_y, 40, text_color);
+
+        // Draw character cursor for selected item
+        if (1 == state->selected_menu_item && state->menu_cursor_texture.width > 0)
+        {
+            float cursor_x = text_x + character_offset_x;
+            float cursor_y = item_y;
+            float cursor_size = 40.0f;
+
+            Rectangle source = {0, 0, (float)state->menu_cursor_texture.width, (float)state->menu_cursor_texture.height};
+            Rectangle dest = {cursor_x, cursor_y, cursor_size, cursor_size};
+            DrawTexturePro(state->menu_cursor_texture, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
+        }
+    }
+
+    // Item 2: Exit
+    {
+        float item_y = menu_start_y + (2 * menu_item_height);
+        const char *menu_text = "Exit";
+        int text_width = MeasureText(menu_text, 40);
+        int text_x = (screen_width - text_width) / 2;
+
+        Color text_color = (2 == state->selected_menu_item) ? YELLOW : WHITE;
+        DrawText(menu_text, text_x, (int)item_y, 40, text_color);
+
+        // Draw character cursor for selected item
+        if (2 == state->selected_menu_item && state->menu_cursor_texture.width > 0)
+        {
+            float cursor_x = text_x + character_offset_x;
+            float cursor_y = item_y;
+            float cursor_size = 40.0f;
+
+            Rectangle source = {0, 0, (float)state->menu_cursor_texture.width, (float)state->menu_cursor_texture.height};
+            Rectangle dest = {cursor_x, cursor_y, cursor_size, cursor_size};
+            DrawTexturePro(state->menu_cursor_texture, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
+        }
+    }
+
+    // Draw instructions
+    const char *instructions = "Press UP/DOWN to navigate, ENTER to select";
+    int instr_width = MeasureText(instructions, 16);
+    int instr_x = (screen_width - instr_width) / 2;
+    int instr_y = screen_height - 40;
+    DrawText(instructions, instr_x, instr_y, 16, LIGHTGRAY);
+}
+
 void game_draw(GameState *state)
 {
     BeginDrawing();
     ClearBackground(RAYWHITE);
+
+    // If title screen, draw it
+    if (state->current_screen == GAME_SCREEN_TITLE)
+    {
+        draw_title_screen(state);
+        EndDrawing();
+        return;
+    }
 
     // If victory screen, draw it
     if (state->game_victory)
@@ -824,6 +1033,12 @@ void game_cleanup(GameState *state)
 {
     player_cleanup(&player);
     background_cleanup(&background);
+
+    // Unload menu cursor texture
+    if (state->menu_cursor_texture.width > 0)
+    {
+        UnloadTexture(state->menu_cursor_texture);
+    }
 
     // Cleanup all levels
     for (int i = 0; i < state->level_count; i++)

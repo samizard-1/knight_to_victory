@@ -9,6 +9,13 @@
 
 typedef enum
 {
+    GAME_SCREEN_TITLE,
+    GAME_SCREEN_PLAYING,
+    GAME_SCREEN_VICTORY
+} GameScreen;
+
+typedef enum
+{
     COLLISION_TYPE_NONE,
     COLLISION_TYPE_HAZARD,
     COLLISION_TYPE_MONSTER
@@ -36,6 +43,10 @@ typedef struct
     bool game_victory;                 // True when game is complete
     float victory_timer;               // Timer for victory animation
     float elapsed_time;                // Total elapsed time in seconds
+    GameScreen current_screen;         // Current screen being displayed (TITLE, PLAYING, VICTORY)
+    int selected_menu_item;            // 0 = Select Level, 1 = Start Game, 2 = Exit
+    int selected_level;                // 0-13 corresponds to level 1-14
+    Texture2D menu_cursor_texture;     // Character texture used as menu cursor
 } GameState;
 
 // Game functions

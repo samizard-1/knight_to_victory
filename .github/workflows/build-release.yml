@@ -11,11 +11,11 @@ jobs:
         include:
           - os: windows-latest
             artifact_name: game.exe
-            asset_name: raylib-game-windows
+            asset_name: Knight-To-Victory-windows
             file_extension: .zip
           - os: macos-latest
             artifact_name: game
-            asset_name: raylib-game-macos
+            asset_name: Knight-To-Victory-macos
             file_extension: .dmg
     
     runs-on: ${{ matrix.os }}
@@ -104,9 +104,9 @@ jobs:
             cp -r assets release_package/
           fi
           cd release_package
-          powershell -Command "Compress-Archive -Path * -DestinationPath ../raylib-game-windows.zip"
+          powershell -Command "Compress-Archive -Path * -DestinationPath ../Knight-To-Victory-windows.zip"
           cd ..
-          ls -lah raylib-game-windows.zip
+          ls -lah Knight-To-Victory-windows.zip
       
       - name: Package Release (macOS) - App Bundle
         if: runner.os == 'macOS' && steps.locate.outputs.app_path != ''
@@ -221,19 +221,19 @@ jobs:
           fi
           
           create-dmg \
-            --volname "Raylib Game" \
+            --volname "Knight To Victory" \
             --window-pos 200 120 \
             --window-size 600 400 \
             --icon-size 100 \
             --icon "game.app" 150 190 \
-            raylib-game-macos.dmg \
+            Knight-To-Victory-macos.dmg \
             dmg_source/ || {
             echo "create-dmg failed, trying alternative method"
-            hdiutil create -volname "Raylib Game" -srcfolder dmg_source -ov -format UDZO raylib-game-macos.dmg
+            hdiutil create -volname "Knight To Victory" -srcfolder dmg_source -ov -format UDZO Knight-To-Victory-macos.dmg
           }
           
           echo "DMG created successfully"
-          ls -lah raylib-game-macos.dmg
+          ls -lah Knight-To-Victory-macos.dmg
       
       - name: Package Release (macOS) - Fallback
         if: runner.os == 'macOS' && steps.locate.outputs.app_path == ''
@@ -250,17 +250,17 @@ jobs:
           
           # Create a ZIP as fallback
           cd release_package
-          zip -r ../raylib-game-macos-app.zip . -x "*.o" "*.a"
+          zip -r ../Knight-To-Victory-macos-app.zip . -x "*.o" "*.a"
           cd ..
-          ls -lah raylib-game-macos-app.zip
+          ls -lah Knight-To-Victory-macos-app.zip
       
       - name: Upload Release Asset (macOS DMG)
         if: runner.os == 'macOS' && steps.locate.outputs.app_path != ''
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./raylib-game-macos.dmg
-          asset_name: raylib-game-macos.dmg
+          asset_path: ./Knight-To-Victory-macos.dmg
+          asset_name: Knight-To-Victory-macos.dmg
           asset_content_type: application/x-apple-diskimage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -270,8 +270,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./raylib-game-macos-app.zip
-          asset_name: raylib-game-macos-app.zip
+          asset_path: ./Knight-To-Victory-macos-app.zip
+          asset_name: Knight-To-Victory-macos-app.zip
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -281,8 +281,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./raylib-game-windows.zip
-          asset_name: raylib-game-windows.zip
+          asset_path: ./Knight-To-Victory-windows.zip
+          asset_name: Knight-To-Victory-windows.zip
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
