@@ -302,10 +302,13 @@ void game_update(GameState *state)
         return; // Don't process other updates during transition
     }
 
-    // Update all hazards (even when paused, so fade cycles continue)
-    for (int i = 0; i < current_level->hazards.count; i++)
+    // Update all hazards (only if not paused and pause menu is not active)
+    if (!state->is_paused && !state->pause_menu_active)
     {
-        hazard_update(&current_level->hazards.hazards[i]);
+        for (int i = 0; i < current_level->hazards.count; i++)
+        {
+            hazard_update(&current_level->hazards.hazards[i]);
+        }
     }
 
     // Update game objects (only if not paused and pause menu is not active)

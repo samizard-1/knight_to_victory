@@ -17,7 +17,7 @@ void hazard_list_cleanup(HazardList *list)
 {
     // Note: Textures are cached statically and managed globally, not per-list
     // So we don't unload them here to avoid double-unload issues
-    
+
     if (list->hazards != NULL)
     {
         free(list->hazards);
@@ -33,7 +33,7 @@ void hazard_list_add(HazardList *list, Hazard hazard)
     static Texture2D dust_storm_texture = {0};
     static Texture2D lava_jet_texture = {0};
     static Texture2D wind_daggers_texture = {0};
-    
+
     if (hazard.texture.id == 0)
     {
         switch (hazard.type)
@@ -69,6 +69,8 @@ void hazard_list_add(HazardList *list, Hazard hazard)
 
     if (list->count < list->capacity)
     {
+        // Store the initial bounds for later reset
+        hazard.initial_bounds = hazard.bounds;
         list->hazards[list->count++] = hazard;
     }
 }
@@ -119,7 +121,7 @@ void hazard_update(Hazard *hazard)
             hazard->is_faded_out = false;
             hazard->current_opacity = 1.0f;
         }
-        else if (current_time < hazard->fade_opaque_duration + hazard->fade_out_duration)
+        else if (hazard->fade_out_duration > 0.0f && current_time < hazard->fade_opaque_duration + hazard->fade_out_duration)
         {
             // Fading out phase
             hazard->is_faded_out = true;
@@ -128,16 +130,22 @@ void hazard_update(Hazard *hazard)
         }
         else if (current_time < hazard->fade_opaque_duration + hazard->fade_out_duration + hazard->fade_out_interval)
         {
-            // Fully faded out phase
+            // Fully faded out phase (or instant fade out if fade_out_duration is 0)
             hazard->is_faded_out = true;
             hazard->current_opacity = 0.0f;
         }
-        else
+        else if (hazard->fade_in_duration > 0.0f && current_time < hazard->fade_opaque_duration + hazard->fade_out_duration + hazard->fade_out_interval + hazard->fade_in_duration)
         {
             // Fading in phase
             hazard->is_faded_out = false;
             float fade_in_time = current_time - (hazard->fade_opaque_duration + hazard->fade_out_duration + hazard->fade_out_interval);
             hazard->current_opacity = fade_in_time / hazard->fade_in_duration;
+        }
+        else
+        {
+            // After fading in completes (or instant fade in if fade_in_duration is 0)
+            hazard->is_faded_out = false;
+            hazard->current_opacity = 1.0f;
         }
     }
 }
@@ -180,6 +188,21 @@ void hazard_init_fade(Hazard *hazard, float fade_opaque_duration, float fade_out
     hazard->fade_out_duration = fade_out_duration;
     hazard->fade_out_interval = fade_out_interval;
     hazard->fade_in_duration = fade_in_duration;
+    hazard->fade_timer = 0.0f;
+    hazard->current_opacity = 1.0f;
+    hazard->is_faded_out = false;
+}
+
+void hazard_reset(Hazard *hazard)
+{
+    // Reset position to initial position
+    hazard->bounds = hazard->initial_bounds;
+    // Reset velocity based on patrol speed and direction
+    if (hazard->can_move)
+    {
+        hazard->velocity = (Vector2){hazard->patrol_speed, 0};
+    }
+    // Reset fade timer to restart the cycle
     hazard->fade_timer = 0.0f;
     hazard->current_opacity = 1.0f;
     hazard->is_faded_out = false;

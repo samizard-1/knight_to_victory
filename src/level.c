@@ -94,6 +94,12 @@ void level_reset(Level *level)
     level->goal.hazards_defeated = 0;
     level->goal.monsters_defeated = 0;
 
+    // Reset all hazards to their initial positions
+    for (int i = 0; i < level->hazards.count; i++)
+    {
+        hazard_reset(&level->hazards.hazards[i]);
+    }
+
     // Reset all spawner timers
     for (int i = 0; i < level->spawners.count; i++)
     {

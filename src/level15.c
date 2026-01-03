@@ -30,12 +30,12 @@ Level level15_create(void)
 
     Level level = level_create(
         15,                        // level number
-        "Hazards of Havoc",               // level name
+        "Hazards of Havoc",        // level name
         background,                // background configuration
         (Vector2){100.0f, 400.0f}, // player start position
         goal                       // level goal
     );
-    
+
     Hazard daggers1 = {
         .type = HAZARD_WIND_DAGGERS,
         .bounds = {2000.0f, 500.0f, 700.0f, 50.0f}, // x, y, width, height (below ground)
@@ -52,7 +52,7 @@ Level level15_create(void)
     Hazard dust_tornado = {
         .type = HAZARD_DUST_STORM,
         .bounds = {1000.0f, 300.0f, 160.0f, 300.0f}, // x, y, width, height (below ground)
-        .damage = 1,                                // Lose 1 heart
+        .damage = 1,                                 // Lose 1 heart
         .active = true,
         .can_move = true,
         .velocity = {50.0f, 0.0f}, // Initial velocity (moving right)
@@ -79,13 +79,13 @@ Level level15_create(void)
 
     hazard_list_add(&level.hazards, jet7);
 
-        // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
+    // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
     hazard_init_fade(&level.hazards.hazards[2], 1.0f, 0.0f, 3.0f, 0.0f);
 
-        Hazard dust_tornado2 = {
+    Hazard dust_tornado2 = {
         .type = HAZARD_DUST_STORM,
         .bounds = {2000.0f, 500.0f, 150.0f, 100.0f}, // x, y, width, height (below ground)
-        .damage = 1,                                // Lose 1 heart
+        .damage = 1,                                 // Lose 1 heart
         .active = true,
         .can_move = true,
         .velocity = {50.0f, 0.0f}, // Initial velocity (moving right)
@@ -96,7 +96,7 @@ Level level15_create(void)
     hazard_list_add(&level.hazards, dust_tornado2);
 
     // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
-    hazard_init_fade(&level.hazards.hazards[2], 0.0f, 2.0f, 1.0f, 5.0f);
+    hazard_init_fade(&level.hazards.hazards[3], 0.0f, 2.0f, 1.0f, 5.0f);
 
     Hazard lava_pit4 = {
         .type = HAZARD_LAVA_PIT,
@@ -109,8 +109,8 @@ Level level15_create(void)
         .patrol_right_bound = 3000.0f,
         .patrol_speed = 0.0f,
         .can_fade = false};
-    
-        hazard_list_add(&level.hazards, lava_pit4); 
-    
+
+    hazard_list_add(&level.hazards, lava_pit4);
+
     return level;
 }
