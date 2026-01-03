@@ -127,7 +127,7 @@ static void draw_goal_marker(Level *level, float camera_x)
 // Initialize levels for the game
 static void initialize_levels(GameState *state)
 {
-    state->level_count = 14;
+    state->level_count = 15;
 
     // Load levels from level definition files
     state->levels[0] = level1_create();
@@ -144,6 +144,7 @@ static void initialize_levels(GameState *state)
     state->levels[11] = level12_create();
     state->levels[12] = level13_create();
     state->levels[13] = level14_create();
+    state->levels[14] = level15_create();
 
     state->current_level_index = 0;
 }

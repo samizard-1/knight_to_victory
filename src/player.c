@@ -325,8 +325,6 @@ void player_draw(Player *player, float camera_x)
     {
 
         draw_scale = player->scale * 1.3f; // Draw ducking texture 1.5x larger
-
-        // Use ducking texture
         if (player->facing_direction == 1)
         {
             texture_to_draw = player->ducking_texture;

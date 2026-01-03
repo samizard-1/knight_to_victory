@@ -18,5 +18,6 @@ Level level11_create(void);
 Level level12_create(void);
 Level level13_create(void);
 Level level14_create(void);
+Level level15_create(void);
 
 #endif // LEVEL_DEFINITIONS_H
