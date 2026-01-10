@@ -8,7 +8,13 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 add_subdirectory(vendor/raylib)
 
 # Create the executable
-add_executable(game
+if(WIN32)
+    set(EXECUTABLE_NAME knight_to_victory)
+else()
+    set(EXECUTABLE_NAME game)
+endif()
+
+add_executable(${EXECUTABLE_NAME}
     src/main.c
     src/game.c
     src/player.c
@@ -40,22 +46,22 @@ add_executable(game
 )
 
 # Link raylib
-target_link_libraries(game raylib)
+target_link_libraries(${EXECUTABLE_NAME} raylib)
 
 # Include directories
-target_include_directories(game PRIVATE
+target_include_directories(${EXECUTABLE_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/raylib/src
 )
 
 # Platform-specific settings
 if(APPLE)
-    target_link_libraries(game "-framework IOKit")
-    target_link_libraries(game "-framework Cocoa")
-    target_link_libraries(game "-framework OpenGL")
+    target_link_libraries(${EXECUTABLE_NAME} "-framework IOKit")
+    target_link_libraries(${EXECUTABLE_NAME} "-framework Cocoa")
+    target_link_libraries(${EXECUTABLE_NAME} "-framework OpenGL")
     
     # Create macOS app bundle
-    set_target_properties(game PROPERTIES
+    set_target_properties(${EXECUTABLE_NAME} PROPERTIES
         MACOSX_BUNDLE TRUE
         MACOSX_BUNDLE_GUI_IDENTIFIER "com.example.raylib-game"
         MACOSX_BUNDLE_BUNDLE_NAME "Raylib Game"
@@ -73,15 +79,15 @@ endif()
 # Copy assets to build directory (for both regular and bundle builds)
 if(APPLE)
     # For macOS bundles, copy to Contents/Resources
-    add_custom_command(TARGET game POST_BUILD
+    add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/assets
-        $<TARGET_BUNDLE_CONTENT_DIR:game>/Resources/assets
+        $<TARGET_BUNDLE_CONTENT_DIR:${EXECUTABLE_NAME}>/Resources/assets
         COMMENT "Copying assets to macOS bundle Resources"
     )
 else()
     # For other platforms, copy next to the executable
-    add_custom_command(TARGET game POST_BUILD
+    add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/assets
         ${CMAKE_BINARY_DIR}/assets

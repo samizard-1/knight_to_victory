@@ -10,7 +10,7 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            artifact_name: game.exe
+            artifact_name: knight_to_victory.exe
             asset_name: Knight-To-Victory-windows
             file_extension: .zip
           - os: macos-latest
@@ -61,7 +61,7 @@ jobs:
           set +e  # Disable exit on error for this step
           
           if [ "${{ runner.os }}" = "Windows" ]; then
-            exe_path="$(find build -name 'game.exe' -type f 2>/dev/null | head -1)"
+            exe_path="$(find build -name 'knight_to_victory.exe' -type f 2>/dev/null | head -1)"
           elif [ "${{ runner.os }}" = "macOS" ]; then
             # Look for the app bundle first
             app_path="$(find build -name 'game.app' -type d 2>/dev/null | head -1)"
