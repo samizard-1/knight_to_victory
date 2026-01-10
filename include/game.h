@@ -11,7 +11,8 @@ typedef enum
 {
     GAME_SCREEN_TITLE,
     GAME_SCREEN_PLAYING,
-    GAME_SCREEN_VICTORY
+    GAME_SCREEN_VICTORY,
+    GAME_SCREEN_OPTIONS
 } GameScreen;
 
 typedef enum
@@ -50,6 +51,10 @@ typedef struct
     bool pause_menu_active;            // True when pause menu is displayed during gameplay
     int pause_menu_selection;          // 0 = Resume Game, 1 = Quit To Menu
     Music background_music;            // Background music that loops throughout the game
+    float music_volume;                // Music volume (0.0 to 1.0)
+    bool options_menu_active;          // True when options menu is displayed
+    int options_menu_selection;        // 0 = Volume Slider, 1 = Back
+    GameScreen previous_screen;        // Previous screen before opening options
 } GameState;
 
 // Game functions

@@ -173,6 +173,10 @@ void game_init(GameState *state)
     state->selected_level = 0;     // Default to Level 1 (index 0)
     state->pause_menu_active = false;
     state->pause_menu_selection = 0;
+    state->music_volume = 0.5f;    // Default volume to 50%
+    state->options_menu_active = false;
+    state->options_menu_selection = 0;
+    state->previous_screen = GAME_SCREEN_TITLE;
 
     InitWindow(state->screen_width, state->screen_height, "Knight To Victory");
     InitAudioDevice();
@@ -195,6 +199,50 @@ void game_update(GameState *state)
 {
     state->delta_time = GetFrameTime();
 
+    // Handle options menu first (before screen-specific handling)
+    if (state->options_menu_active)
+    {
+        // Volume control with LEFT/RIGHT arrow keys
+        if (IsKeyPressed(KEY_LEFT))
+        {
+            state->music_volume = state->music_volume - 0.1f;
+            if (state->music_volume < 0.0f)
+                state->music_volume = 0.0f;
+            SetMusicVolume(state->background_music, state->music_volume);
+        }
+        else if (IsKeyPressed(KEY_RIGHT))
+        {
+            state->music_volume = state->music_volume + 0.1f;
+            if (state->music_volume > 1.0f)
+                state->music_volume = 1.0f;
+            SetMusicVolume(state->background_music, state->music_volume);
+        }
+
+        // Menu navigation
+        if (IsKeyPressed(KEY_UP))
+        {
+            state->options_menu_selection = (state->options_menu_selection - 1 + 2) % 2;
+        }
+        else if (IsKeyPressed(KEY_DOWN))
+        {
+            state->options_menu_selection = (state->options_menu_selection + 1) % 2;
+        }
+
+        // Back option
+        if (IsKeyPressed(KEY_ENTER) && state->options_menu_selection == 1)
+        {
+            state->options_menu_active = false;
+        }
+
+        // ESC to go back
+        if (IsKeyPressed(KEY_ESCAPE))
+        {
+            state->options_menu_active = false;
+        }
+
+        return;
+    }
+
     // Handle title screen
     if (state->current_screen == GAME_SCREEN_TITLE)
     {
@@ -204,11 +252,11 @@ void game_update(GameState *state)
         // Menu navigation
         if (IsKeyPressed(KEY_UP))
         {
-            state->selected_menu_item = (state->selected_menu_item - 1 + 3) % 3;
+            state->selected_menu_item = (state->selected_menu_item - 1 + 4) % 4;
         }
         else if (IsKeyPressed(KEY_DOWN))
         {
-            state->selected_menu_item = (state->selected_menu_item + 1) % 3;
+            state->selected_menu_item = (state->selected_menu_item + 1) % 4;
         }
 
         // Level selection with LEFT/RIGHT when on level selector
@@ -258,6 +306,13 @@ void game_update(GameState *state)
                 background = background_create_with_variant(level->background.variant);
             }
             else if (state->selected_menu_item == 2)
+            {
+                // Options
+                state->options_menu_active = true;
+                state->previous_screen = GAME_SCREEN_TITLE;
+                state->options_menu_selection = 0;
+            }
+            else if (state->selected_menu_item == 3)
             {
                 // Exit Game
                 state->running = false;
@@ -712,11 +767,11 @@ void game_update(GameState *state)
     {
         if (IsKeyPressed(KEY_UP))
         {
-            state->pause_menu_selection = (state->pause_menu_selection - 1 + 2) % 2;
+            state->pause_menu_selection = (state->pause_menu_selection - 1 + 3) % 3;
         }
         else if (IsKeyPressed(KEY_DOWN))
         {
-            state->pause_menu_selection = (state->pause_menu_selection + 1) % 2;
+            state->pause_menu_selection = (state->pause_menu_selection + 1) % 3;
         }
 
         if (IsKeyPressed(KEY_ENTER))
@@ -727,6 +782,13 @@ void game_update(GameState *state)
                 state->pause_menu_active = false;
             }
             else if (state->pause_menu_selection == 1)
+            {
+                // Options
+                state->options_menu_active = true;
+                state->previous_screen = GAME_SCREEN_PLAYING;
+                state->options_menu_selection = 0;
+            }
+            else if (state->pause_menu_selection == 2)
             {
                 // Quit To Menu - reset all levels and return to title
                 state->current_screen = GAME_SCREEN_TITLE;
@@ -945,10 +1007,10 @@ static void draw_title_screen(GameState *state)
         }
     }
 
-    // Item 2: Exit
+    // Item 2: Settings
     {
         float item_y = menu_start_y + (2 * menu_item_height);
-        const char *menu_text = "Exit";
+        const char *menu_text = "Settings";
         int text_width = MeasureText(menu_text, 40);
         int text_x = (screen_width - text_width) / 2;
 
@@ -968,8 +1030,100 @@ static void draw_title_screen(GameState *state)
         }
     }
 
+    // Item 3: Exit
+    {
+        float item_y = menu_start_y + (3 * menu_item_height);
+        const char *menu_text = "Exit";
+        int text_width = MeasureText(menu_text, 40);
+        int text_x = (screen_width - text_width) / 2;
+
+        Color text_color = (3 == state->selected_menu_item) ? YELLOW : WHITE;
+        DrawText(menu_text, text_x, (int)item_y, 40, text_color);
+
+        // Draw character cursor for selected item
+        if (3 == state->selected_menu_item && state->menu_cursor_texture.width > 0)
+        {
+            float cursor_x = text_x + character_offset_x;
+            float cursor_y = item_y;
+            float cursor_size = 40.0f;
+
+            Rectangle source = {0, 0, (float)state->menu_cursor_texture.width, (float)state->menu_cursor_texture.height};
+            Rectangle dest = {cursor_x, cursor_y, cursor_size, cursor_size};
+            DrawTexturePro(state->menu_cursor_texture, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
+        }
+    }
+
     // Draw instructions
     const char *instructions = "Press UP/DOWN to navigate, ENTER to select";
+    int instr_width = MeasureText(instructions, 16);
+    int instr_x = (screen_width - instr_width) / 2;
+    int instr_y = screen_height - 40;
+    DrawText(instructions, instr_x, instr_y, 16, LIGHTGRAY);
+}
+
+// Helper function to draw options menu
+static void draw_options_menu(GameState *state)
+{
+    int screen_width = state->screen_width;
+    int screen_height = state->screen_height;
+
+    // Draw semi-transparent overlay
+    DrawRectangle(0, 0, screen_width, screen_height, (Color){0, 0, 0, 150});
+
+    // Draw title
+    const char *title_text = "Options";
+    int title_width = MeasureText(title_text, 60);
+    int title_x = (screen_width - title_width) / 2;
+    int title_y = screen_height / 2 - 100;
+
+    // Draw title with shadow
+    DrawText(title_text, title_x - 2, title_y - 2, 60, BLACK);
+    DrawText(title_text, title_x + 2, title_y + 2, 60, BLACK);
+    DrawText(title_text, title_x, title_y, 60, YELLOW);
+
+    // Volume control section
+    float item_y = screen_height / 2 + 20;
+    float slider_width = 300.0f;
+    float slider_height = 20.0f;
+    float slider_x = (screen_width - slider_width) / 2;
+    float slider_y = item_y;
+
+    // Draw volume label
+    const char *volume_label = "Volume:";
+    int label_width = MeasureText(volume_label, 30);
+    DrawText(volume_label, (int)(slider_x - label_width - 20), (int)(slider_y - 10), 30, WHITE);
+
+    // Draw slider background
+    DrawRectangle((int)slider_x, (int)slider_y, (int)slider_width, (int)slider_height, DARKGRAY);
+
+    // Draw slider fill
+    float fill_width = state->music_volume * slider_width;
+    DrawRectangle((int)slider_x, (int)slider_y, (int)fill_width, (int)slider_height, ORANGE);
+
+    // Draw slider border
+    DrawRectangleLines((int)slider_x, (int)slider_y, (int)slider_width, (int)slider_height, WHITE);
+
+    // Draw volume percentage text
+    const char *volume_text = TextFormat("%.0f%%", state->music_volume * 100.0f);
+    int volume_width = MeasureText(volume_text, 24);
+    DrawText(volume_text, (int)(slider_x + slider_width + 20), (int)(slider_y - 5), 24, WHITE);
+
+    // Draw hint for volume control
+    const char *volume_hint = "(LEFT/RIGHT to adjust)";
+    int hint_width = MeasureText(volume_hint, 16);
+    DrawText(volume_hint, (int)(slider_x + (slider_width - hint_width) / 2), (int)(slider_y + 35), 16, LIGHTGRAY);
+
+    // Back button
+    float back_y = item_y + 100.0f;
+    const char *back_text = "Back";
+    int back_width = MeasureText(back_text, 40);
+    int back_x = (screen_width - back_width) / 2;
+
+    Color back_color = (state->options_menu_selection == 1) ? YELLOW : WHITE;
+    DrawText(back_text, back_x, (int)back_y, 40, back_color);
+
+    // Draw instructions
+    const char *instructions = "Press UP/DOWN to navigate, ENTER to select, ESC to go back";
     int instr_width = MeasureText(instructions, 16);
     int instr_x = (screen_width - instr_width) / 2;
     int instr_y = screen_height - 40;
@@ -997,13 +1151,13 @@ static void draw_pause_menu(GameState *state)
     DrawText(title_text, title_x, title_y, 60, YELLOW);
 
     // Menu items
-    const char *menu_items[2] = {"Resume Game", "Quit To Menu"};
+    const char *menu_items[3] = {"Resume Game", "Settings", "Quit To Menu"};
     float menu_start_y = screen_height / 2 + 20;
     float menu_item_height = 70.0f;
     float character_offset_x = -180.0f; // Offset to the left of menu items
 
     // Draw menu items
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 3; i++)
     {
         float item_y = menu_start_y + (i * menu_item_height);
         int text_width = MeasureText(menu_items[i], 40);
@@ -1038,6 +1192,14 @@ void game_draw(GameState *state)
 {
     BeginDrawing();
     ClearBackground(RAYWHITE);
+
+    // Draw options menu if active (overlays everything)
+    if (state->options_menu_active)
+    {
+        draw_options_menu(state);
+        EndDrawing();
+        return;
+    }
 
     // If title screen, draw it
     if (state->current_screen == GAME_SCREEN_TITLE)
