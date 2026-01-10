@@ -173,7 +173,7 @@ void game_init(GameState *state)
     state->selected_level = 0;     // Default to Level 1 (index 0)
     state->pause_menu_active = false;
     state->pause_menu_selection = 0;
-    state->music_volume = 0.5f;    // Default volume to 50%
+    state->music_volume = 0.5f; // Default volume to 50%
     state->options_menu_active = false;
     state->options_menu_selection = 0;
     state->previous_screen = GAME_SCREEN_TITLE;
