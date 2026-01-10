@@ -39,7 +39,7 @@ Level level14_create(void)
     Hazard daggers1 = {
         .type = HAZARD_WIND_DAGGERS,
         .bounds = {2000.0f, 500.0f, 700.0f, 50.0f}, // x, y, width, height (below ground)
-        .damage = 1,                                // Lose 1 heart
+        .damage = 2,                                // Lose 1 heart
         .active = true,
         .can_move = true,
         .velocity = {50.0f, 0.0f}, // Initial velocity (moving right)
@@ -52,7 +52,7 @@ Level level14_create(void)
     Hazard daggers2 = {
         .type = HAZARD_WIND_DAGGERS,
         .bounds = {2500.0f, 500.0f, 700.0f, 50.0f}, // x, y, width, height (below ground)
-        .damage = 1,                                // Lose 1 heart
+        .damage = 2,                                // Lose 1 heart
         .active = true,
         .can_move = true,
         .velocity = {50.0f, 0.0f}, // Initial velocity (moving right)

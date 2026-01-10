@@ -121,6 +121,7 @@ void level_reactivate_enemies(Level *level)
     {
         level->monsters.monsters[i].active = true;
         level->monsters.monsters[i].hearts = level->monsters.monsters[i].max_hearts;
+        level->monsters.monsters[i].dead_texture_timer = 0.0f;
     }
 
     // Reactivate all hazards

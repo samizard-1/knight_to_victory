@@ -18,6 +18,8 @@ typedef struct Monster
     float width;
     float height;
     Texture2D texture;
+    Texture2D dead_texture;
+    float dead_texture_timer; // Timer to show dead texture before removal
     float scale;
     int hearts;
     int max_hearts;

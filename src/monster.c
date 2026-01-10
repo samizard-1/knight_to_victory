@@ -1,5 +1,6 @@
 #include "monster.h"
 #include "asset_paths.h"
+#include "config.h"
 #include <stdlib.h>
 
 Monster monster_create(float x, float y, float width, float height, int max_hearts,
@@ -12,6 +13,8 @@ Monster monster_create(float x, float y, float width, float height, int max_hear
     m.width = width;
     m.height = height;
     m.texture = LoadTexture(get_asset_path(texture_path));
+    m.dead_texture = LoadTexture(get_asset_path("monster_dead.png")); // Load dead texture
+    m.dead_texture_timer = 0.0f;
     m.scale = scale;
     m.hearts = max_hearts;
     m.max_hearts = max_hearts;
@@ -36,7 +39,11 @@ Monster monster_create(float x, float y, float width, float height, int max_hear
 void monster_update(Monster *monster)
 {
     if (!monster->active)
+    {
+        // If monster is dead, increment dead texture timer
+        monster->dead_texture_timer += GetFrameTime();
         return;
+    }
 
     // Run custom update first if provided
     if (monster->custom_update)
@@ -94,8 +101,9 @@ void monster_draw_hearts_default(Monster *monster, float screen_pos_x, float scr
 }
 
 void monster_draw(Monster *monster, float camera_x)
-{
-    if (!monster->active)
+{  
+    
+    if (!monster->active && monster->dead_texture_timer > MONSTER_DEAD_TEXTURE_TIME)
         return;
 
     // Apply camera offset to center on screen
@@ -103,9 +111,16 @@ void monster_draw(Monster *monster, float camera_x)
         monster->position.x - camera_x + GetScreenWidth() / 2.0f,
         monster->position.y};
 
+    Texture2D texture_to_draw = monster->texture;
+
+    if (!monster->active)
+    {
+        texture_to_draw = monster->dead_texture;
+    }
+
     // Draw monster texture
     DrawTextureEx(
-        monster->texture,
+        texture_to_draw,
         screen_pos,
         0.0f,
         monster->scale,
@@ -126,8 +141,11 @@ void monster_draw(Monster *monster, float camera_x)
         RED);
     */
 
-    // Draw hearts using custom or default function
-    monster->draw_hearts(monster, screen_pos.x, screen_pos.y);
+    if (monster->active)
+    {
+        // Draw hearts using custom or default function
+        monster->draw_hearts(monster, screen_pos.x, screen_pos.y);
+    }
 }
 
 void monster_take_damage(Monster *monster, int damage)

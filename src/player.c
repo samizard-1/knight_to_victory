@@ -64,6 +64,7 @@ Player player_create(float x, float y)
 
 void player_handle_input(Player *player)
 {
+    Sound game_music = LoadSound("assets/main_soundtrack.mp3");
     // Horizontal movement
     if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT))
     {
@@ -96,6 +97,7 @@ void player_handle_input(Player *player)
     {
         player->is_ducking = false;
     }
+    if (IsKeyPressed(KEY_SPACE)) PlaySound(game_music);
     
 
     // Jumping

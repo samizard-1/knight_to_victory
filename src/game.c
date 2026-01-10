@@ -127,7 +127,7 @@ static void draw_goal_marker(Level *level, float camera_x)
 // Initialize levels for the game
 static void initialize_levels(GameState *state)
 {
-    state->level_count = 15;
+    state->level_count = 16;
 
     // Load levels from level definition files
     state->levels[0] = level1_create();
@@ -145,6 +145,7 @@ static void initialize_levels(GameState *state)
     state->levels[12] = level13_create();
     state->levels[13] = level14_create();
     state->levels[14] = level15_create();
+    state->levels[15] = level16_create();
 
     state->current_level_index = 0;
 }
@@ -174,6 +175,7 @@ void game_init(GameState *state)
     state->pause_menu_selection = 0;
 
     InitWindow(state->screen_width, state->screen_height, "Knight To Victory");
+    InitAudioDevice();
     SetTargetFPS(state->fps);
     SetExitKey(KEY_NULL); // Disable default ESC-to-close behavior so we can handle ESC for pause menu
 
@@ -376,7 +378,6 @@ void game_update(GameState *state)
             pickup_spawner_update(&current_level->spawners.spawners[i], &current_level->pickups);
         }
     }
-
     // Check for hazard collisions (only if cooldown expired)
     Rectangle player_rect = {
         player.position.x,

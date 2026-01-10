@@ -10,7 +10,8 @@ int main(void)
 
     // Initialize game
     game_init(&game_state);
-
+    InitAudioDevice();
+    Sound game_music = LoadSound("assets/main_soundtrack.mp3");
     // Main game loop
     // We use game_state.running as the primary exit condition to allow ESC to be handled by our pause menu
     // However, we still check WindowShouldClose() which will be set by the window close button (X)
@@ -31,6 +32,9 @@ int main(void)
 
     // Cleanup
     game_cleanup(&game_state);
+    UnloadSound(game_music);
+
+    CloseAudioDevice();
 
     return 0;
 }

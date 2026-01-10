@@ -1,6 +1,6 @@
-# Raylib Side-Scrolling Game
+# Knight To Victory: Sidescrolling Game using Raylib
 
-A basic framework for creating a side-scrolling game using raylib in C.
+By: Samizard
 
 ## Project Structure
 

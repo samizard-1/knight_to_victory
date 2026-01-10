@@ -100,8 +100,8 @@ Level level15_create(void)
 
     Hazard lava_pit4 = {
         .type = HAZARD_LAVA_PIT,
-        .bounds = {3000.0f, 550.0f, 400.0f, 50.0f}, // x, y, width, height (below ground)
-        .damage = 2,                                // Lose 2 hearts
+        .bounds = {3000.0f, 650.0f, 150.0f, 80.0f}, // x, y, width, height (below ground)
+        .damage = 1,                                // Lose 2 hearts
         .active = true,
         .can_move = false,
         .velocity = {0.0f, 0.0f}, // Initial velocity (stationary)

@@ -11,6 +11,9 @@
 #define MAX_HEARTS 3
 #define INITIAL_HEARTS 3
 
+// Monster settings
+#define MONSTER_DEAD_TEXTURE_TIME 5.0f // Time to show dead texture before removing monster
+
 // Game state settings
 #define PAUSE_DURATION 2.0f             // Duration of pause after losing a heart (in seconds)
 #define DAMAGE_DISPLAY_MONSTER_HIT 0.5f // Duration to display monster hit texture (in seconds)
