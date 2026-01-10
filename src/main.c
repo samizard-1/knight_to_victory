@@ -8,10 +8,21 @@ int main(void)
     // Initialize asset paths
     init_asset_paths();
 
-    // Initialize game
+    // Initialize game (this will call InitWindow and InitAudioDevice)
     game_init(&game_state);
-    InitAudioDevice();
-    Sound game_music = LoadSound("assets/main_soundtrack.mp3");
+
+    // Load and play background music after game is initialized
+    const char *music_path = get_asset_path("fantasy-craft-loop-431346.mp3");
+
+    // Use LoadMusicStream for long audio files like background music
+    game_state.background_music = LoadMusicStream(music_path);
+
+    if (game_state.background_music.frameCount > 0)
+    {
+        SetMusicVolume(game_state.background_music, 0.5f); // Set volume to 50%
+        PlayMusicStream(game_state.background_music);
+    }
+
     // Main game loop
     // We use game_state.running as the primary exit condition to allow ESC to be handled by our pause menu
     // However, we still check WindowShouldClose() which will be set by the window close button (X)
@@ -23,6 +34,9 @@ int main(void)
             game_state.running = false;
         }
 
+        // Update music stream (required for streaming music to work)
+        UpdateMusicStream(game_state.background_music);
+
         // Update
         game_update(&game_state);
 
@@ -32,7 +46,7 @@ int main(void)
 
     // Cleanup
     game_cleanup(&game_state);
-    UnloadSound(game_music);
+    UnloadMusicStream(game_state.background_music);
 
     CloseAudioDevice();
 

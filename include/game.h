@@ -49,6 +49,7 @@ typedef struct
     Texture2D menu_cursor_texture;     // Character texture used as menu cursor
     bool pause_menu_active;            // True when pause menu is displayed during gameplay
     int pause_menu_selection;          // 0 = Resume Game, 1 = Quit To Menu
+    Music background_music;            // Background music that loops throughout the game
 } GameState;
 
 // Game functions
