@@ -43,6 +43,8 @@ add_executable(${EXECUTABLE_NAME}
     src/level14.c
     src/level15.c
     src/level16.c
+    src/level17.c
+    src/level18.c
 )
 
 # Link raylib
