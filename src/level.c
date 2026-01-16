@@ -15,9 +15,9 @@ Level level_create(int level_number, const char *name, BackgroundConfig backgrou
     level.player_start_position = start_pos;
     level.goal = goal;
     level.completed = false;
-    level.hazards = hazard_list_create(10);          // Max 10 hazards per level
+    level.hazards = hazard_list_create(20);          // Max 10 hazards per level
     level.monsters = monster_list_create(20);        // Max 20 monsters per level
-    level.pickups = pickup_list_create(20);          // Max 20 pickups per level
+    level.pickups = pickup_list_create(500);          // Max 20 pickups per level
     level.spawners = pickup_spawner_list_create(10); // Max 10 spawners per level
 
     return level;
