@@ -32,7 +32,7 @@ Level level20_create(void)
         20,                        // level number
         "The Long Desert Trekk",               // level name
         background,                // background configuration
-        (Vector2){3000.0f, 400.0f}, // player start position (3/000)
+        (Vector2){100.0f, 400.0f}, // player start position (3/000)
         goal                       // level goal
     );
 
@@ -159,7 +159,7 @@ Level level20_create(void)
     hazard_list_add(&level.hazards, jetty);
 
     // Initialize fade properties (0 sec opaque, 0.5 sec fade out, 0.5 sec gap, 0.5 sec fade in)
-    hazard_init_fade(&level.hazards.hazards[1], 1.0f, 0.0f, 3.0f, 0.0f);
+    hazard_init_fade(&level.hazards.hazards[2], 1.0f, 0.0f, 3.0f, 0.0f);
 
     Hazard tj = {
         .type = HAZARD_LAVA_JET,
@@ -176,7 +176,7 @@ Level level20_create(void)
     hazard_list_add(&level.hazards, tj);
 
     // Initialize fade properties (0 sec opaque, 0.5 sec fade out, 0.5 sec gap, 0.5 sec fade in)
-    hazard_init_fade(&level.hazards.hazards[2], 1.0f, 0.0f, 3.0f, 0.0f);
+    hazard_init_fade(&level.hazards.hazards[3], 1.0f, 0.0f, 3.0f, 0.0f);
 
     Monster trial_dragon = monster_create(
         3600.0f,            // x position
@@ -206,7 +206,7 @@ Level level20_create(void)
     hazard_list_add(&level.hazards, trial_dust2);
 
     // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
-    hazard_init_fade(&level.hazards.hazards[3], 1.0f, 1.0f, 2.0f, 1.0f); 
+    hazard_init_fade(&level.hazards.hazards[4], 1.0f, 1.0f, 2.0f, 1.0f); 
 
     Monster trial_slug3 = monster_create(
         600.0f,                    // x position
