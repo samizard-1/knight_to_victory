@@ -51,6 +51,13 @@ Level level2_create(void)
         0.08f             // scale
     );
     monster_list_add(&level.monsters, bat);
+    PickupSpawner test_pickup = pickup_spawner_create(
+        PICKUP_FIREBALL,           // Pickup type
+        (Vector2){120.0f, 630.0f}, // Spawn location
+        1,                         // Value (1 projectile)
+        3.0f                       // Spawn interval
+    );
+    pickup_spawner_list_add(&level.spawners, test_pickup);
 
     return level;
 }

@@ -50,7 +50,7 @@ Level level16_create(void)
     hazard_list_add(&level.hazards, dust_tornado3);
 
     // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
-    hazard_init_fade(&level.hazards.hazards[0], 1.0f, 2.0f, 1.0f, 5.0f);
+    hazard_init_fade(&level.hazards.hazards[0], 1.0f, 1.0f, 1.0f, 1.0f);
 
         Hazard dust_tornado4 = {
         .type = HAZARD_DUST_STORM,
@@ -66,7 +66,7 @@ Level level16_create(void)
     hazard_list_add(&level.hazards, dust_tornado4);
 
     // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
-    hazard_init_fade(&level.hazards.hazards[1], 1.0f, 2.0f, 1.0f, 5.0f); 
+    hazard_init_fade(&level.hazards.hazards[1], 1.0f, 1.0f, 1.0f, 1.0f); 
 
         Hazard dust_tornado5 = {
         .type = HAZARD_DUST_STORM,

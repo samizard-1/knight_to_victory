@@ -63,7 +63,7 @@ Level level15_create(void)
     hazard_list_add(&level.hazards, dust_tornado);
 
     // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
-    hazard_init_fade(&level.hazards.hazards[1], 0.0f, 2.0f, 1.0f, 15.0f);
+    hazard_init_fade(&level.hazards.hazards[1], 1.0f, 1.0f, 1.0f, 1.0f);
 
     Hazard jet7 = {
         .type = HAZARD_LAVA_JET,
