@@ -30,7 +30,7 @@ Level level20_create(void)
 
     Level level = level_create(
         20,                        // level number
-        "The Long Desert Trekk",   // level name
+        "The Long Desert Trekk",               // level name
         background,                // background configuration
         (Vector2){100.0f, 400.0f}, // player start position (3/000)
         goal                       // level goal
@@ -206,7 +206,7 @@ Level level20_create(void)
     hazard_list_add(&level.hazards, trial_dust2);
 
     // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
-    hazard_init_fade(&level.hazards.hazards[4], 1.0f, 1.0f, 2.0f, 1.0f);
+    hazard_init_fade(&level.hazards.hazards[4], 1.0f, 1.0f, 2.0f, 1.0f); 
 
     Monster trial_slug3 = monster_create(
         600.0f,             // x position
