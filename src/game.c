@@ -478,7 +478,7 @@ void game_update(GameState *state)
                 (Vector2){world_mouse_x, mouse_pos.y},
                 PROJECTILE_SOURCE_PLAYER);
             projectile_list_add(&state->projectiles, fireball);
-            player.projectile_inventory--; // Consume one projectile
+            player.projectile_inventory--;            // Consume one projectile
             player.inventory.counts[LOOT_FIREBALL]--; // Update inventory display
         }
 
