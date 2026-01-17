@@ -48,7 +48,8 @@ Level level9_create(void)
         1100.0f,                      // patrol right boundary
         120.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.08f                         // scale
+        0.08f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard);
 
@@ -63,7 +64,8 @@ Level level9_create(void)
         1900.0f,                      // patrol right boundary
         140.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.1f                         // scale
+        0.1f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard1);
 
@@ -78,7 +80,8 @@ Level level9_create(void)
         2300.0f,                      // patrol right boundary
         120.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.08f                         // scale
+        0.08f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard2);
 
@@ -93,7 +96,8 @@ Level level9_create(void)
         2700.0f,                      // patrol right boundary
         100.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.1f                         // scale
+        0.1f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard3);
 
@@ -108,7 +112,8 @@ Level level9_create(void)
         3500.0f,                      // patrol right boundary
         80.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.1f                         // scale - really big!
+        0.1f,// scale - really big!
+    "bat"
     );
     monster_list_add(&level.monsters, guard4);
 
@@ -123,7 +128,8 @@ Level level9_create(void)
         2700.0f,                      // patrol right boundary
         110.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.1f                         // scale
+        0.1f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard5);
 
@@ -138,7 +144,8 @@ Level level9_create(void)
         1900.0f,                      // patrol right boundary
         100.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.08f                         // scale
+        0.08f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard6);
         Monster guard7 = monster_create(
@@ -151,7 +158,8 @@ Level level9_create(void)
         3500.0f,                      // patrol right boundary
         90.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.1f                         // scale
+        0.1f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard7);
         Monster guard8 = monster_create(
@@ -164,7 +172,8 @@ Level level9_create(void)
         3100.0f,                      // patrol right boundary
         90.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.08f                         // scale
+        0.08f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard8);
         // Add unique slug 3
@@ -178,7 +187,8 @@ Level level9_create(void)
         2100.0f,                      // patrol right boundary
         145.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.08f                         // scale
+        0.08f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard9);
 
@@ -193,7 +203,8 @@ Level level9_create(void)
         2500.0f,                      // patrol right boundary
         135.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.1f                         // scale
+        0.1f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard10);
 
@@ -208,7 +219,8 @@ Level level9_create(void)
         3300.0f,                      // patrol right boundary
         135.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.1f                         // scale - really big!
+        0.1f,// scale - really big!
+    "bat"
     );
     monster_list_add(&level.monsters, guard11);
 
@@ -223,7 +235,8 @@ Level level9_create(void)
         2500.0f,                      // patrol right boundary
         135.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.1f                         // scale
+        0.1f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard12);
 
@@ -238,7 +251,8 @@ Level level9_create(void)
         1700.0f,                      // patrol right boundary
         145.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.08f                         // scale
+        0.08f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard13);
         Monster guard14 = monster_create(
@@ -251,7 +265,8 @@ Level level9_create(void)
         3300.0f,                      // patrol right boundary
         135.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.1f                         // scale
+        0.1f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard14);
         Monster guard15 = monster_create(
@@ -264,7 +279,8 @@ Level level9_create(void)
         2900.0f,                      // patrol right boundary
         145.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.08f                         // scale
+        0.08f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard15);
        // Add unique slug 5
@@ -279,7 +295,8 @@ Level level9_create(void)
         2600.0f,                      // patrol right boundary
         130.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.1f                         // scale
+        0.1f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard16);
 
@@ -294,7 +311,8 @@ Level level9_create(void)
         1800.0f,                      // patrol right boundary
         140.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.08f                         // scale
+        0.08f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard17);
         Monster guard18 = monster_create(
@@ -307,7 +325,8 @@ Level level9_create(void)
         3400.0f,                      // patrol right boundary
         130.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.1f                         // scale
+        0.1f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard18);
         Monster guard19 = monster_create(
@@ -320,7 +339,8 @@ Level level9_create(void)
         3000.0f,                      // patrol right boundary
         140.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.08f                         // scale
+        0.08f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, guard19);
 

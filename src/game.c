@@ -42,30 +42,66 @@ static void draw_hearts_ui(Player *player, int screen_width, int screen_height)
     }
 }
 
-// Helper function to draw projectile inventory UI
-static void draw_projectile_inventory_ui(Player *player, int screen_height)
+// Helper function to draw loot inventory UI on right side
+static void draw_loot_inventory_ui(Player *player, int screen_width)
 {
-    float icon_height = 40.0f;
+    float icon_height = 36.0f;
     float padding = 10.0f;
+    float spacing = icon_height + 8.0f; // Space between icons
+    float start_x = screen_width - padding - (icon_height * 2);
+    float start_y = padding + icon_height / 2.0f;
 
-    // Calculate width based on texture aspect ratio
-    float aspect_ratio = (float)player->fireball_texture.width / (float)player->fireball_texture.height;
-    float icon_width = icon_height * aspect_ratio;
+    // Draw inventory items (LOOT_COIN, LOOT_HEALTH_POTION, PROTECTION_POTION, LOOT_FIREBALL)
+    for (int i = 0; i < LOOT_TYPE_COUNT; i++)
+    {
+        int count = player->inventory.counts[i];
 
-    float start_x = padding + icon_width / 2.0f;
-    float start_y = screen_height - padding - icon_height / 2.0f;
+        // Skip if no items and no texture loaded
+        if (count == 0 && player->inventory.loot_textures[i].id == 0)
+            continue;
 
-    // Draw fireball icon
-    Rectangle source = {0, 0, (float)player->fireball_texture.width, (float)player->fireball_texture.height};
-    Rectangle dest = {start_x, start_y, icon_width, icon_height};
-    DrawTexturePro(player->fireball_texture, source, dest, (Vector2){icon_width / 2.0f, icon_height / 2.0f}, 0.0f, WHITE);
+        // Skip if texture is not loaded
+        if (player->inventory.loot_textures[i].id == 0)
+            continue;
 
-    // Draw inventory count centered on icon
-    const char *count_text = TextFormat("%d", player->projectile_inventory);
-    int text_width = MeasureText(count_text, 20);
-    float text_x = start_x - text_width / 2.0f + 8.0f; // Shifted right for better visibility
-    float text_y = start_y - 10.0f;                    // Vertically center on icon
-    DrawText(count_text, (int)text_x, (int)text_y, 20, BLACK);
+        Texture2D texture = player->inventory.loot_textures[i];
+
+        // Calculate width based on texture aspect ratio
+        float aspect_ratio = (float)texture.width / (float)texture.height;
+        float icon_width = icon_height * aspect_ratio;
+
+        // Position for this item (vertical stack)
+        float item_x = start_x + icon_width / 2.0f;
+        float item_y = start_y + (i * spacing);
+
+        // Draw icon background (semi-transparent dark)
+        DrawRectangle((int)(item_x - icon_width / 2.0f - 2.0f),
+                      (int)(item_y - icon_height / 2.0f - 2.0f),
+                      (int)(icon_width + 4.0f),
+                      (int)(icon_height + 4.0f),
+                      (Color){0, 0, 0, 100});
+
+        // Draw item icon
+        Rectangle source = {0, 0, (float)texture.width, (float)texture.height};
+        Rectangle dest = {item_x, item_y, icon_width, icon_height};
+        DrawTexturePro(texture, source, dest, (Vector2){icon_width / 2.0f, icon_height / 2.0f}, 0.0f, WHITE);
+
+        // Draw count if > 0
+        if (count > 0)
+        {
+            const char *count_text = TextFormat("%d", count);
+            int text_width = MeasureText(count_text, 16);
+            float text_x = item_x + icon_width / 2.0f - text_width / 2.0f - 2.0f;
+            float text_y = item_y + icon_height / 2.0f - 8.0f;
+
+            // Draw text with outline for better readability
+            DrawText(count_text, (int)text_x - 1, (int)text_y, 16, BLACK);
+            DrawText(count_text, (int)text_x + 1, (int)text_y, 16, BLACK);
+            DrawText(count_text, (int)text_x, (int)text_y - 1, 16, BLACK);
+            DrawText(count_text, (int)text_x, (int)text_y + 1, 16, BLACK);
+            DrawText(count_text, (int)text_x, (int)text_y, 16, YELLOW);
+        }
+    }
 }
 
 // Helper function to draw level info
@@ -150,9 +186,37 @@ static void initialize_levels(GameState *state)
     state->levels[17] = level18_create();
     state->levels[18] = level19_create();
     state->levels[19] = level20_create();
-    
 
     state->current_level_index = 0;
+}
+
+// Helper function to initialize the loot system with default loot table
+static void init_loot_system(GameState *state)
+{
+    state->loot_system = loot_system_create();
+
+    // Create a default loot table for monsters
+    LootTable default_table = loot_table_create("DEFAULT", 4);
+
+    // Add loot items with drop chances and values
+    // Coins: 80% chance to drop 1 coin per monster kill
+    LootItemDef coin_def = {.type = LOOT_COIN, .drop_chance = 0.8f, .value = 1, .scale = 0.03f};
+    loot_table_add_item(&default_table, coin_def);
+
+    // Health Potions: 30% chance to drop 1 health potion
+    LootItemDef health_potion_def = {.type = LOOT_HEALTH_POTION, .drop_chance = 0.3f, .value = 1, .scale = 0.05f};
+    loot_table_add_item(&default_table, health_potion_def);
+
+    // Protection Potions: 15% chance to drop 1 protection potion
+    LootItemDef protection_potion_def = {.type = PROTECTION_POTION, .drop_chance = 0.15f, .value = 1, .scale = 0.04f};
+    loot_table_add_item(&default_table, protection_potion_def);
+
+    // Fireballs: 40% chance to drop 1 fireball
+    LootItemDef fireball_def = {.type = LOOT_FIREBALL, .drop_chance = 0.4f, .value = 1, .scale = 0.04f};
+    loot_table_add_item(&default_table, fireball_def);
+
+    // Set this as the default loot table for all monsters
+    loot_system_set_default_table(&state->loot_system, default_table);
 }
 
 void game_init(GameState *state)
@@ -193,6 +257,9 @@ void game_init(GameState *state)
 
     // Initialize levels
     initialize_levels(state);
+
+    // Initialize loot system
+    init_loot_system(state);
 
     // Initialize game objects
     Level *current_level = &state->levels[state->current_level_index];
@@ -412,6 +479,7 @@ void game_update(GameState *state)
                 PROJECTILE_SOURCE_PLAYER);
             projectile_list_add(&state->projectiles, fireball);
             player.projectile_inventory--; // Consume one projectile
+            player.inventory.counts[LOOT_FIREBALL]--; // Update inventory display
         }
 
         // Update all projectiles
@@ -431,6 +499,9 @@ void game_update(GameState *state)
                 pickup_update(&current_level->pickups.pickups[i]);
             }
         }
+
+        // Update loot items
+        loot_list_update(&current_level->loot);
 
         // Update all spawners in the level (spawn new pickups on a timer)
         for (int i = 0; i < current_level->spawners.count; i++)
@@ -452,46 +523,55 @@ void game_update(GameState *state)
             Hazard *hazard = &current_level->hazards.hazards[i];
             if (hazard->active && hazard_check_collision(hazard, player_rect) && hazard_is_dangerous(hazard))
             {
-                // Player hit a hazard (only if it's dangerous/not faded out)
-                player_take_damage(&player, hazard->damage);
-
-                // Apply damage type based on hazard type
-                DamageType damage_type = DAMAGE_TYPE_FIRE; // Default to fire
-                float damage_duration = DAMAGE_DISPLAY_FIRE;
-
-                switch (hazard->type)
+                // Only process collision if protection potion is not active
+                if (!player.protection_potion_active)
                 {
-                case HAZARD_LAVA_PIT:
-                    damage_type = DAMAGE_TYPE_FIRE;
-                    damage_duration = DAMAGE_DISPLAY_FIRE;
-                    break;
-                case HAZARD_DUST_STORM:
-                    damage_type = DAMAGE_TYPE_DUST;
-                    damage_duration = DAMAGE_DISPLAY_DUST;
-                    break;
-                case HAZARD_SPIKE_TRAP:
-                    damage_type = DAMAGE_TYPE_MONSTER_HIT; // Spikes feel like sharp impacts
-                    damage_duration = DAMAGE_DISPLAY_MONSTER_HIT;
-                    break;
-                case HAZARD_LAVA_JET:
-                    damage_type = DAMAGE_TYPE_FIRE;
-                    damage_duration = DAMAGE_DISPLAY_FIRE;
-                    break;
-                case HAZARD_WIND_DAGGERS:
-                    damage_type = DAMAGE_TYPE_MONSTER_HIT;
-                    damage_duration = DAMAGE_DISPLAY_MONSTER_HIT;
-                    break;
+                    // Player hit a hazard (only if it's dangerous/not faded out)
+                    player_take_damage(&player, hazard->damage);
+
+                    // Apply damage type based on hazard type
+                    DamageType damage_type = DAMAGE_TYPE_FIRE; // Default to fire
+                    float damage_duration = DAMAGE_DISPLAY_FIRE;
+
+                    switch (hazard->type)
+                    {
+                    case HAZARD_LAVA_PIT:
+                        damage_type = DAMAGE_TYPE_FIRE;
+                        damage_duration = DAMAGE_DISPLAY_FIRE;
+                        break;
+                    case HAZARD_DUST_STORM:
+                        damage_type = DAMAGE_TYPE_DUST;
+                        damage_duration = DAMAGE_DISPLAY_DUST;
+                        break;
+                    case HAZARD_SPIKE_TRAP:
+                        damage_type = DAMAGE_TYPE_MONSTER_HIT; // Spikes feel like sharp impacts
+                        damage_duration = DAMAGE_DISPLAY_MONSTER_HIT;
+                        break;
+                    case HAZARD_LAVA_JET:
+                        damage_type = DAMAGE_TYPE_FIRE;
+                        damage_duration = DAMAGE_DISPLAY_FIRE;
+                        break;
+                    case HAZARD_WIND_DAGGERS:
+                        damage_type = DAMAGE_TYPE_MONSTER_HIT;
+                        damage_duration = DAMAGE_DISPLAY_MONSTER_HIT;
+                        break;
+                    }
+
+                    player_apply_damage_type(&player, damage_type, damage_duration);
+                    state->burnt_message_timer = PAUSE_DURATION;        // Display message
+                    state->is_paused = true;                            // Pause the game
+                    state->hazard_cooldown = 3.0f;                      // Cooldown to prevent re-collision
+                    state->last_collision_type = COLLISION_TYPE_HAZARD; // Track collision type
+                    // Check if player is out of hearts
+                    if (player.hearts <= 0)
+                    {
+                        state->game_over = true; // Trigger game over
+                    }
                 }
-
-                player_apply_damage_type(&player, damage_type, damage_duration);
-                state->burnt_message_timer = PAUSE_DURATION;        // Display message
-                state->is_paused = true;                            // Pause the game
-                state->hazard_cooldown = 3.0f;                      // Cooldown to prevent re-collision
-                state->last_collision_type = COLLISION_TYPE_HAZARD; // Track collision type
-                // Check if player is out of hearts
-                if (player.hearts <= 0)
+                else
                 {
-                    state->game_over = true; // Trigger game over
+                    // Protection potion is active, consume it and prevent collision sequence
+                    player_take_damage(&player, hazard->damage);
                 }
             }
         }
@@ -518,6 +598,19 @@ void game_update(GameState *state)
                     monster_take_damage(monster, 1);     // Sword deals 1 damage
                     state->sword_attack_cooldown = 1.0f; // Set cooldown after attack
 
+                    // Generate loot if monster died
+                    if (was_alive && !monster->active)
+                    {
+                        // Generate loot drops
+                        LootTable *loot_table = loot_system_get_table_or_default(&state->loot_system, monster->type);
+                        LootList drops = generate_loot_drops(monster->position, loot_table, &player.inventory);
+                        for (int l = 0; l < drops.count; l++)
+                        {
+                            loot_list_add(&current_level->loot, drops.loot[l]);
+                        }
+                        loot_list_cleanup(&drops);
+                    }
+
                     // Track defeated monsters for goal
                     if (was_alive && !monster->active && current_level->goal.type == GOAL_TYPE_MONSTERS)
                     {
@@ -540,20 +633,29 @@ void game_update(GameState *state)
 
             if (monster->active && CheckCollisionRecs(player_rect, monster_rect))
             {
-                // Player hit a monster
-                player_take_damage(&player, 1); // Monsters deal 1 damage
-                player_apply_damage_type(&player, DAMAGE_TYPE_MONSTER_HIT, DAMAGE_DISPLAY_MONSTER_HIT);
-
-                // Pause the game and set cooldown
-                state->burnt_message_timer = PAUSE_DURATION;         // Control pause duration
-                state->is_paused = true;                             // Pause the game
-                state->hazard_cooldown = 3.0f;                       // Cooldown to prevent re-collision
-                state->last_collision_type = COLLISION_TYPE_MONSTER; // Track collision type
-
-                // Check if player is out of hearts
-                if (player.hearts <= 0)
+                // Only process collision if protection potion is not active
+                if (!player.protection_potion_active)
                 {
-                    state->game_over = true; // Trigger game over
+                    // Player hit a monster
+                    player_take_damage(&player, 1); // Monsters deal 1 damage
+                    player_apply_damage_type(&player, DAMAGE_TYPE_MONSTER_HIT, DAMAGE_DISPLAY_MONSTER_HIT);
+
+                    // Pause the game and set cooldown
+                    state->burnt_message_timer = PAUSE_DURATION;         // Control pause duration
+                    state->is_paused = true;                             // Pause the game
+                    state->hazard_cooldown = 3.0f;                       // Cooldown to prevent re-collision
+                    state->last_collision_type = COLLISION_TYPE_MONSTER; // Track collision type
+
+                    // Check if player is out of hearts
+                    if (player.hearts <= 0)
+                    {
+                        state->game_over = true; // Trigger game over
+                    }
+                }
+                else
+                {
+                    // Protection potion is active, consume it and prevent collision sequence
+                    player_take_damage(&player, 1);
                 }
             }
         }
@@ -576,9 +678,14 @@ void game_update(GameState *state)
                 // Player picked up fireball
                 if (pickup->type == PICKUP_FIREBALL)
                 {
+                    player.inventory.counts[LOOT_FIREBALL] += pickup->value;
                     player.projectile_inventory += pickup->value;
 
                     // Cap at max
+                    if (player.inventory.counts[LOOT_FIREBALL] > player.max_projectiles)
+                    {
+                        player.inventory.counts[LOOT_FIREBALL] = player.max_projectiles;
+                    }
                     if (player.projectile_inventory > player.max_projectiles)
                     {
                         player.projectile_inventory = player.max_projectiles;
@@ -587,6 +694,45 @@ void game_update(GameState *state)
 
                 // Deactivate pickup
                 pickup->active = false;
+            }
+        }
+    }
+
+    // Check for loot-player collisions
+    for (int i = 0; i < current_level->loot.count; i++)
+    {
+        Loot *loot = &current_level->loot.loot[i];
+        if (loot->active)
+        {
+            Rectangle loot_rect = {
+                loot->position.x - (loot->texture.width * loot->scale) / 2.0f,
+                loot->position.y - (loot->texture.height * loot->scale) / 2.0f,
+                loot->texture.width * loot->scale,
+                loot->texture.height * loot->scale};
+
+            if (CheckCollisionRecs(player_rect, loot_rect))
+            {
+                // Player picked up loot - add to inventory
+                inventory_add_loot(&player.inventory, loot->type, loot->value);
+
+                // Handle special case for fireballs - also add to projectile inventory
+                if (loot->type == LOOT_FIREBALL)
+                {
+                    player.projectile_inventory += loot->value;
+
+                    // Cap at max
+                    if (player.inventory.counts[LOOT_FIREBALL] > player.max_projectiles)
+                    {
+                        player.inventory.counts[LOOT_FIREBALL] = player.max_projectiles;
+                    }
+                    if (player.projectile_inventory > player.max_projectiles)
+                    {
+                        player.projectile_inventory = player.max_projectiles;
+                    }
+                }
+
+                // Deactivate loot
+                loot->active = false;
             }
         }
     }
@@ -623,6 +769,19 @@ void game_update(GameState *state)
                 monster_take_damage(monster, 1); // Each projectile deals 1 damage
                 projectile->active = false;      // Destroy projectile on impact
 
+                // Generate loot if monster died
+                if (was_alive && !monster->active)
+                {
+                    // Generate loot drops
+                    LootTable *loot_table = loot_system_get_table_or_default(&state->loot_system, monster->type);
+                    LootList drops = generate_loot_drops(monster->position, loot_table, &player.inventory);
+                    for (int l = 0; l < drops.count; l++)
+                    {
+                        loot_list_add(&current_level->loot, drops.loot[l]);
+                    }
+                    loot_list_cleanup(&drops);
+                }
+
                 // Track defeated monsters for goal
                 if (was_alive && !monster->active && current_level->goal.type == GOAL_TYPE_MONSTERS)
                 {
@@ -639,22 +798,32 @@ void game_update(GameState *state)
 
         if (projectile_check_player_collision(projectile, player_rect))
         {
-            // Monster projectile hit player
-            player_take_damage(&player, 1); // Each projectile deals 1 damage
-
-            // Apply fire damage type (projectiles are fire-based)
-            player_apply_damage_type(&player, DAMAGE_TYPE_FIRE, DAMAGE_DISPLAY_FIRE);
-            state->burnt_message_timer = PAUSE_DURATION;        // Display message
-            state->is_paused = true;                            // Pause the game
-            state->hazard_cooldown = 3.0f;                      // Cooldown to prevent re-collision
-            state->last_collision_type = COLLISION_TYPE_HAZARD; // Track collision type
-            projectile->active = false;                         // Destroy projectile on impact
-
-            // Check if player is out of hearts
-            if (player.hearts <= 0)
+            // Only process collision if protection potion is not active
+            if (!player.protection_potion_active)
             {
-                state->game_over = true; // Trigger game over
+                // Monster projectile hit player
+                player_take_damage(&player, 1); // Each projectile deals 1 damage
+
+                // Apply fire damage type (projectiles are fire-based)
+                player_apply_damage_type(&player, DAMAGE_TYPE_FIRE, DAMAGE_DISPLAY_FIRE);
+                state->burnt_message_timer = PAUSE_DURATION;        // Display message
+                state->is_paused = true;                            // Pause the game
+                state->hazard_cooldown = 3.0f;                      // Cooldown to prevent re-collision
+                state->last_collision_type = COLLISION_TYPE_HAZARD; // Track collision type
+
+                // Check if player is out of hearts
+                if (player.hearts <= 0)
+                {
+                    state->game_over = true; // Trigger game over
+                }
             }
+            else
+            {
+                // Protection potion is active, consume it and prevent collision sequence
+                player_take_damage(&player, 1);
+            }
+
+            projectile->active = false; // Destroy projectile on impact
         }
     }
 
@@ -1264,6 +1433,9 @@ void game_draw(GameState *state)
         }
     }
 
+    // Draw loot items
+    loot_list_draw(&current_level->loot, background.camera.target.x);
+
     // Draw goal marker
     draw_goal_marker(current_level, background.camera.target.x);
 
@@ -1272,7 +1444,7 @@ void game_draw(GameState *state)
 
     // Draw UI
     draw_hearts_ui(&player, state->screen_width, state->screen_height);
-    draw_projectile_inventory_ui(&player, state->screen_height);
+    draw_loot_inventory_ui(&player, state->screen_width);
     draw_level_ui(state);
 
     // Draw damage message if active (and game over message if applicable)

@@ -27,6 +27,7 @@ add_executable(${EXECUTABLE_NAME}
     src/asset_paths.c
     src/dragon.c
     src/damage.c
+    src/loot.c
     src/level1.c
     src/level2.c
     src/level3.c
@@ -98,3 +99,36 @@ else()
         COMMENT "Copying assets to build directory"
     )
 endif()
+
+# Build test executable for loot system
+add_executable(test_loot
+    tests/test_loot.c
+    src/loot.c
+    src/asset_paths.c
+)
+
+target_link_libraries(test_loot PRIVATE raylib)
+
+target_include_directories(test_loot PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/raylib/src
+)
+
+# Build memory profiling test
+add_executable(test_memory
+    tests/test_memory.c
+    src/loot.c
+    src/asset_paths.c
+)
+
+target_link_libraries(test_memory PRIVATE raylib)
+
+target_include_directories(test_memory PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/raylib/src
+)
+
+# Enable testing
+enable_testing()
+add_test(NAME LootSystemTests COMMAND test_loot)
+add_test(NAME MemoryProfilingTests COMMAND test_memory)

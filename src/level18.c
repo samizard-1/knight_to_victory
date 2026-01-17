@@ -62,7 +62,8 @@ Level level18_create(void)
         1130.0f,                    // patrol right boundary
         80.0f,                     // patrol speed
         "monster_slug.png", // texture path
-        0.16f                       // scale
+        0.16f,// scale
+    "slug"
     );
     monster_list_add(&level.monsters, trial_slug2);
     // Add bat monster patrolling in the middle area
@@ -105,7 +106,8 @@ Level level18_create(void)
         1510.0f,           // patrol right boundary
         170.0f,            // patrol speed
         "crab.png", // texture path
-        0.12f              // scale
+        0.12f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, trial_crab);
     

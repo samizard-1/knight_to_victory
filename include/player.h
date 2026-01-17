@@ -3,6 +3,7 @@
 
 #include "raylib.h"
 #include "damage.h"
+#include "loot.h"
 
 typedef struct
 {
@@ -29,6 +30,7 @@ typedef struct
     Texture2D sword_flipleft_texture;
     Texture2D ducking_texture;
     Texture2D ducking_flipleft_texture;
+    Texture2D protection_potion_texture;
     Rectangle sword_hitbox;
     float scale;
     int hearts;
@@ -41,6 +43,8 @@ typedef struct
     int facing_direction;          // 1 for right, -1 for left
     bool is_using_sword;
     bool is_ducking;           // True when player is using sword attack
+    bool protection_potion_active; // True when protection potion is in effect
+    Inventory inventory;           // Inventory system for tracking collected loot
 
 } Player;
 

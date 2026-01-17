@@ -5,6 +5,7 @@
 #include "hazard.h"
 #include "monster.h"
 #include "pickup.h"
+#include "loot.h"
 
 typedef enum
 {
@@ -54,6 +55,7 @@ typedef struct
     bool completed;
     // Pickup spawning configuration
     PickupSpawnerList spawners; // List of pickup spawners for this level
+    LootList loot;              // Active loot items in this level
 } Level;
 
 // Level functions

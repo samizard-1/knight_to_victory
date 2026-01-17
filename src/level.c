@@ -17,8 +17,9 @@ Level level_create(int level_number, const char *name, BackgroundConfig backgrou
     level.completed = false;
     level.hazards = hazard_list_create(20);          // Max 10 hazards per level
     level.monsters = monster_list_create(20);        // Max 20 monsters per level
-    level.pickups = pickup_list_create(500);          // Max 20 pickups per level
+    level.pickups = pickup_list_create(500);         // Max 20 pickups per level
     level.spawners = pickup_spawner_list_create(10); // Max 10 spawners per level
+    level.loot = loot_list_create(100);              // Max 100 active loot items per level
 
     return level;
 }
@@ -34,6 +35,7 @@ void level_cleanup(Level *level)
     monster_list_cleanup(&level->monsters);
     pickup_list_cleanup(&level->pickups);
     pickup_spawner_list_cleanup(&level->spawners);
+    loot_list_cleanup(&level->loot);
 }
 
 bool level_check_goal_reached(Level *level, Vector2 player_pos)

@@ -35,6 +35,7 @@ typedef struct Monster
     MonsterUpdateFunc custom_update;   // Custom update logic
     MonsterCleanupFunc custom_cleanup; // Custom cleanup logic
     void *custom_data;                 // Pointer for custom data specific to monster type
+    const char *type;                  // Monster type identifier for loot lookup (e.g., "skeleton", "dragon")
 } Monster;
 
 typedef struct
@@ -47,7 +48,7 @@ typedef struct
 // Monster functions
 Monster monster_create(float x, float y, float width, float height, int max_hearts,
                        float left_bound, float right_bound, float patrol_speed,
-                       const char *texture_path, float scale);
+                       const char *texture_path, float scale, const char *type);
 void monster_update(Monster *monster);
 void monster_draw(Monster *monster, float camera_x);
 void monster_take_damage(Monster *monster, int damage);

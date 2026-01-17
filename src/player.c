@@ -3,6 +3,7 @@
 #include "hazard.h"
 #include "config.h"
 #include "asset_paths.h"
+#include "loot.h"
 #include <stddef.h>
 
 Player player_create(float x, float y)
@@ -42,6 +43,9 @@ Player player_create(float x, float y)
     // Load fireball texture for inventory display
     p.fireball_texture = LoadTexture(get_asset_path("fireball.png"));
 
+    // Load protection potion texture for inventory display
+    p.protection_potion_texture = LoadTexture(get_asset_path("protection_potion.png"));
+
     // Initialize health
     p.hearts = INITIAL_HEARTS;
     p.max_hearts = MAX_HEARTS;
@@ -58,6 +62,14 @@ Player player_create(float x, float y)
 
     // Initialize sword usage state
     p.is_using_sword = false;
+
+    // Initialize protection potion state
+    p.protection_potion_active = false;
+
+    // Initialize inventory system
+    p.inventory = inventory_create();
+    // Initialize projectile_inventory as legacy field synced with inventory
+    p.projectile_inventory = 0; // Will sync after pickup
 
     return p;
 }
@@ -102,6 +114,30 @@ void player_handle_input(Player *player)
     {
         player->velocity.y = -player->jump_power;
         player->is_jumping = true;
+    }
+
+    // Use health potion with 'H' key
+    if (IsKeyPressed(KEY_H))
+    {
+        if (player->hearts < player->max_hearts)
+        {
+            if (inventory_remove_loot(&player->inventory, LOOT_HEALTH_POTION, 1))
+            {
+                player_heal(player, 1);
+            }
+        }
+    }
+
+    // Use protection potion with 'P' key
+    if (IsKeyPressed(KEY_P))
+    {
+        if (!player->protection_potion_active)
+        {
+            if (inventory_remove_loot(&player->inventory, PROTECTION_POTION, 1))
+            {
+                player->protection_potion_active = true;
+            }
+        }
     }
 }
 
@@ -354,8 +390,12 @@ void player_draw(Player *player, float camera_x)
         }
     }
 
-    // Use white color for all cases (textures already have appropriate colors)
+    // Use white color for all cases, but apply blue tint if protection potion is active
     Color draw_color = WHITE;
+    if (player->protection_potion_active)
+    {
+        draw_color = BLUE;
+    }
 
     DrawTextureEx(
         texture_to_draw,
@@ -402,6 +442,14 @@ void player_take_damage(Player *player, int damage)
 {
     if (player->is_dead)
         return;
+
+    // Check if protection potion is active
+    if (player->protection_potion_active)
+    {
+        // Protection potion absorbs the damage
+        player->protection_potion_active = false;
+        return;
+    }
 
     player->hearts -= damage;
 
@@ -488,4 +536,8 @@ void player_cleanup(Player *player)
     UnloadTexture(player->filled_heart_texture);
     UnloadTexture(player->empty_heart_texture);
     UnloadTexture(player->fireball_texture);
+    if (player->protection_potion_texture.id > 0)
+    {
+        UnloadTexture(player->protection_potion_texture);
+    }
 }

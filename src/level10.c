@@ -49,7 +49,8 @@ Level level10_create(void)
         950.0f,                 // patrol right boundary
         90.0f,                  // patrol speed
         "../assets/dragon.png", // texture path
-        0.5f                    // scale
+        0.5f,// scale
+    "dragon"
     );
 
     // Apply dragon-specific customizations
@@ -66,7 +67,8 @@ Level level10_create(void)
         850.0f,                 // patrol right boundary
         135.0f,                  // patrol speed
         "../assets/baby_dragon.png", // texture path
-        0.18f                    // scale
+        0.18f,// scale
+    "dragon"
     );
     monster_list_add(&level.monsters, baby1);
     return level;

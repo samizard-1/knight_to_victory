@@ -39,16 +39,17 @@ Level level2_create(void)
 
     // Add bat monster patrolling in the middle area
     Monster bat = monster_create(
-        600.0f,           // x position
-        535.0f,           // y position
-        80.0f,            // width
-        80.0f,            // height
-        2,                // max hearts
-        400.0f,           // patrol left boundary
-        800.0f,           // patrol right boundary
-        150.0f,           // patrol speed
+        600.0f,    // x position
+        535.0f,    // y position
+        80.0f,     // width
+        80.0f,     // height
+        2,         // max hearts
+        400.0f,    // patrol left boundary
+        800.0f,    // patrol right boundary
+        150.0f,    // patrol speed
         "bat.png", // texture path
-        0.08f             // scale
+        0.08f,     // scale
+        "bat"      // monster type for loot lookup
     );
     monster_list_add(&level.monsters, bat);
     PickupSpawner test_pickup = pickup_spawner_create(

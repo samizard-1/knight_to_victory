@@ -62,7 +62,8 @@ Level level19_create(void)
         1130.0f,                    // patrol right boundary
         80.0f,                     // patrol speed
         "monster_slug.png", // texture path
-        0.16f                       // scale
+        0.16f,// scale
+    "slug"
     );
     monster_list_add(&level.monsters, trial_slug2);
     // Add bat monster patrolling in the middle area
@@ -105,7 +106,8 @@ Level level19_create(void)
         1510.0f,           // patrol right boundary
         170.0f,            // patrol speed
         "crab.png", // texture path
-        0.12f              // scale
+        0.12f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, trial_crab);
 
@@ -119,7 +121,8 @@ Level level19_create(void)
         1980.0f,           // patrol right boundary
         165.0f,            // patrol speed
         "crab.png", // texture path
-        0.15f              // scale
+        0.15f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, trial_crab2);
 
@@ -154,7 +157,8 @@ Level level19_create(void)
         2500.0f,                      // patrol right boundary
         100.0f,                       // patrol speed
         "../assets/bat.png", // texture path
-        0.1f                         // scale
+        0.1f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, trial_bat2);
 
@@ -168,7 +172,8 @@ Level level19_create(void)
         3000.0f,           // patrol right boundary
         165.0f,            // patrol speed
         "crab.png", // texture path
-        0.15f              // scale
+        0.15f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, trial_crab3);
 
@@ -216,7 +221,8 @@ Level level19_create(void)
         4500.0f,           // patrol right boundary
         100.0f,            // patrol speed
         "baby_dragon.png", // texture path
-        0.2f              // scale
+        0.2f,// scale
+    "dragon"
     );
     monster_list_add(&level.monsters, trial_dragon);
 

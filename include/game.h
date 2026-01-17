@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include "level.h"
 #include "projectile.h"
+#include "loot.h"
 
 #define MAX_LEVELS 20
 
@@ -55,6 +56,7 @@ typedef struct
     bool options_menu_active;          // True when options menu is displayed
     int options_menu_selection;        // 0 = Volume Slider, 1 = Back
     GameScreen previous_screen;        // Previous screen before opening options
+    LootSystem loot_system;            // Global loot system (shared across all levels)
 } GameState;
 
 // Game functions

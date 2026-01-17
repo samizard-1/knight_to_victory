@@ -47,7 +47,8 @@ Level level6_create(void)
         1100.0f,           // patrol right boundary
         170.0f,            // patrol speed
         "crab.png", // texture path
-        0.12f              // scale
+        0.12f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, crab1);
 
@@ -62,7 +63,8 @@ Level level6_create(void)
         1900.0f,           // patrol right boundary
         160.0f,            // patrol speed
         "crab.png", // texture path
-        0.13f              // scale
+        0.13f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, crab2);
     Monster crab3 = monster_create(
@@ -75,7 +77,8 @@ Level level6_create(void)
         2300.0f,           // patrol right boundary
         170.0f,            // patrol speed
         "crab.png", // texture path
-        0.12f              // scale
+        0.12f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, crab3);
 
@@ -90,7 +93,8 @@ Level level6_create(void)
         2700.0f,           // patrol right boundary
         160.0f,            // patrol speed
         "crab.png", // texture path
-        0.13f              // scale
+        0.13f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, crab4);
     Monster Crabono = monster_create(
@@ -103,7 +107,8 @@ Level level6_create(void)
         2700.0f,           // patrol right boundary
         140.0f,            // patrol speed
         "crab.png", // texture path
-        0.19f              // scale
+        0.19f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, Crabono);
     Monster crab5 = monster_create(
@@ -116,7 +121,8 @@ Level level6_create(void)
         2700.0f,           // patrol right boundary
         170.0f,            // patrol speed
         "crab.png", // texture path
-        0.12f              // scale
+        0.12f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, crab5);
 
@@ -131,7 +137,8 @@ Level level6_create(void)
         1900.0f,           // patrol right boundary
         170.0f,            // patrol speed
         "crab.png", // texture path
-        0.13f              // scale
+        0.13f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, crab6);
 

@@ -38,66 +38,71 @@ Level level4_create(void)
 
     // Add bat monster patrolling in the middle area
     Monster slug = monster_create(
-        600.0f,                    // x position
-        550.0f,                    // y position
-        70.0f,                     // width
-        70.0f,                     // height
-        3,                         // max hearts
-        300.0f,                    // patrol left boundary
-        700.0f,                    // patrol right boundary
-        80.0f,                     // patrol speed
+        600.0f,             // x position
+        550.0f,             // y position
+        70.0f,              // width
+        70.0f,              // height
+        3,                  // max hearts
+        300.0f,             // patrol left boundary
+        700.0f,             // patrol right boundary
+        80.0f,              // patrol speed
         "monster_slug.png", // texture path
-        0.1f                       // scale
+        0.1f,               // scale
+        "slug"              // monster type for loot lookup
     );
     monster_list_add(&level.monsters, slug);
     // Add bat monster patrolling in the middle area
     Monster bat2 = monster_create(
-        400.0f,           // x position
-        535.0f,           // y position
-        80.0f,            // width
-        80.0f,            // height
-        2,                // max hearts
-        100.0f,           // patrol left boundary
-        600.0f,           // patrol right boundary
-        150.0f,           // patrol speed
+        400.0f,    // x position
+        535.0f,    // y position
+        80.0f,     // width
+        80.0f,     // height
+        2,         // max hearts
+        100.0f,    // patrol left boundary
+        600.0f,    // patrol right boundary
+        150.0f,    // patrol speed
         "bat.png", // texture path
-        0.08f             // scale
+        0.08f,     // scale
+        "bat"      // monster type for loot lookup
     );
     Monster slug2 = monster_create(
-        600.0f,                    // x position
-        550.0f,                    // y position
-        70.0f,                     // width
-        70.0f,                     // height
-        3,                         // max hearts
-        600.0f,                    // patrol left boundary
-        900.0f,                    // patrol right boundary
-        80.0f,                     // patrol speed
+        600.0f,             // x position
+        550.0f,             // y position
+        70.0f,              // width
+        70.0f,              // height
+        3,                  // max hearts
+        600.0f,             // patrol left boundary
+        900.0f,             // patrol right boundary
+        80.0f,              // patrol speed
         "monster_slug.png", // texture path
-        0.1f                       // scale
+        0.1f,               // scale
+        "slug"              // monster type for loot lookup
     );
     Monster bat3 = monster_create(
-        400.0f,           // x position
-        475.0f,           // y position
-        80.0f,            // width
-        80.0f,            // height
-        4,                // max hearts
-        1000.0f,          // patrol left boundary
-        1600.0f,          // patrol right boundary
-        150.0f,           // patrol speed
+        400.0f,    // x position
+        475.0f,    // y position
+        80.0f,     // width
+        80.0f,     // height
+        4,         // max hearts
+        1000.0f,   // patrol left boundary
+        1600.0f,   // patrol right boundary
+        150.0f,    // patrol speed
         "bat.png", // texture path
-        0.35f             // scale
+        0.35f,     // scale
+        "bat"      // monster type for loot lookup
     );
     Monster slug3 = monster_create(
-        600.0f,                    // x position
-        565.0f,                    // y position
-        70.0f,                     // width
-        70.0f,                     // height
-        1,                         // max hearts
-        1600.0f,                   // patrol left boundary
-        2000.0f,                   // patrol right boundary
-        100.0f,                    // patrol speed
+        600.0f,             // x position
+        565.0f,             // y position
+        70.0f,              // width
+        70.0f,              // height
+        1,                  // max hearts
+        1600.0f,            // patrol left boundary
+        2000.0f,            // patrol right boundary
+        100.0f,             // patrol speed
         "monster_slug.png", // texture path
-        0.07f                      // scale
+        0.07f,              // scale
+        "slug"              // monster type for loot lookup
     );
     monster_list_add(&level.monsters, bat2);
     monster_list_add(&level.monsters, bat3);

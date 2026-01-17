@@ -5,7 +5,7 @@
 
 Monster monster_create(float x, float y, float width, float height, int max_hearts,
                        float left_bound, float right_bound, float patrol_speed,
-                       const char *texture_path, float scale)
+                       const char *texture_path, float scale, const char *type)
 {
     Monster m;
     m.position = (Vector2){x, y};
@@ -22,6 +22,7 @@ Monster monster_create(float x, float y, float width, float height, int max_hear
     m.patrol_right_bound = right_bound;
     m.patrol_speed = patrol_speed;
     m.active = true;
+    m.type = type; // Store monster type for loot lookup
 
     // Load heart textures
     m.filled_heart_texture = LoadTexture(get_asset_path("filled_heart.png"));
@@ -101,8 +102,8 @@ void monster_draw_hearts_default(Monster *monster, float screen_pos_x, float scr
 }
 
 void monster_draw(Monster *monster, float camera_x)
-{  
-    
+{
+
     if (!monster->active && monster->dead_texture_timer > MONSTER_DEAD_TEXTURE_TIME)
         return;
 

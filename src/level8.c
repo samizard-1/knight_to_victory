@@ -47,7 +47,8 @@ Level level8_create(void)
         1100.0f,                   // patrol right boundary
         120.0f,                    // patrol speed
         "monster_slug.png", // texture path
-        0.08f                      // scale
+        0.08f,// scale
+    "slug"
     );
     monster_list_add(&level.monsters, slug1);
 
@@ -62,7 +63,8 @@ Level level8_create(void)
         1900.0f,                   // patrol right boundary
         140.0f,                    // patrol speed
         "monster_slug.png", // texture path
-        0.16f                      // scale
+        0.16f,// scale
+    "slug"
     );
     monster_list_add(&level.monsters, slug2);
 
@@ -77,7 +79,8 @@ Level level8_create(void)
         2300.0f,                   // patrol right boundary
         120.0f,                    // patrol speed
         "monster_slug.png", // texture path
-        0.09f                      // scale
+        0.09f,// scale
+    "slug"
     );
     monster_list_add(&level.monsters, slug3);
 
@@ -92,7 +95,8 @@ Level level8_create(void)
         2700.0f,                   // patrol right boundary
         100.0f,                    // patrol speed
         "monster_slug.png", // texture path
-        0.14f                      // scale
+        0.14f,// scale
+    "slug"
     );
     monster_list_add(&level.monsters, slug4);
 
@@ -107,7 +111,8 @@ Level level8_create(void)
         3500.0f,                   // patrol right boundary
         80.0f,                     // patrol speed
         "monster_slug.png", // texture path
-        0.35f                      // scale - really big!
+        0.35f,// scale - really big!
+    "slug"
     );
     monster_list_add(&level.monsters, Sluggato);
 
@@ -122,7 +127,8 @@ Level level8_create(void)
         2700.0f,                   // patrol right boundary
         110.0f,                    // patrol speed
         "monster_slug.png", // texture path
-        0.11f                      // scale
+        0.11f,// scale
+    "slug"
     );
     monster_list_add(&level.monsters, slug5);
 
@@ -137,7 +143,8 @@ Level level8_create(void)
         1900.0f,                   // patrol right boundary
         100.0f,                    // patrol speed
         "monster_slug.png", // texture path
-        0.13f                      // scale
+        0.13f,// scale
+    "slug"
     );
     monster_list_add(&level.monsters, slug6);
     Monster slug7 = monster_create(
@@ -150,7 +157,8 @@ Level level8_create(void)
         3500.0f,                   // patrol right boundary
         90.0f,                     // patrol speed
         "monster_slug.png", // texture path
-        0.16f                      // scale
+        0.16f,// scale
+    "slug"
     );
     monster_list_add(&level.monsters, slug7);
     Monster slug8 = monster_create(
@@ -163,7 +171,8 @@ Level level8_create(void)
         3100.0f,                   // patrol right boundary
         90.0f,                     // patrol speed
         "monster_slug.png", // texture path
-        0.16f                      // scale
+        0.16f,// scale
+    "slug"
     );
     monster_list_add(&level.monsters, slug8);
 

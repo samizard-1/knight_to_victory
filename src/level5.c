@@ -47,7 +47,8 @@ Level level5_create(void)
         700.0f,                    // patrol right boundary
         80.0f,                     // patrol speed
         "monster_slug.png", // texture path
-        0.1f                       // scale
+        0.1f,// scale
+    "slug"
     );
     monster_list_add(&level.monsters, slug);
     // Add bat monster patrolling in the middle area
@@ -61,7 +62,8 @@ Level level5_create(void)
         600.0f,           // patrol right boundary
         150.0f,           // patrol speed
         "bat.png", // texture path
-        0.08f             // scale
+        0.08f,// scale
+    "bat"
     );
     Monster crab = monster_create(
         600.0f,            // x position
@@ -73,7 +75,8 @@ Level level5_create(void)
         1700.0f,           // patrol right boundary
         150.0f,            // patrol speed
         "crab.png", // texture path
-        0.1f               // scale
+        0.1f,// scale
+    "bat"
     );
     Monster bat3 = monster_create(
         400.0f,           // x position
@@ -85,7 +88,8 @@ Level level5_create(void)
         1600.0f,          // patrol right boundary
         150.0f,           // patrol speed
         "bat.png", // texture path
-        0.35f             // scale
+        0.35f,// scale
+    "bat"
     );
     Monster slug3 = monster_create(
         600.0f,                    // x position
@@ -97,7 +101,8 @@ Level level5_create(void)
         2000.0f,                   // patrol right boundary
         100.0f,                    // patrol speed
         "monster_slug.png", // texture path
-        0.07f                      // scale
+        0.07f,// scale
+    "slug"
     );
     Monster bat4 = monster_create(
         750.0f,           // x position
@@ -109,7 +114,8 @@ Level level5_create(void)
         1800.0f,          // patrol right boundary
         120.0f,           // patrol speed
         "bat.png", // texture path
-        0.08f             // scale
+        0.08f,// scale
+    "bat"
     );
     Monster slug4 = monster_create(
         850.0f,                    // x position
@@ -121,7 +127,8 @@ Level level5_create(void)
         1100.0f,                   // patrol right boundary
         90.0f,                     // patrol speed
         "monster_slug.png", // texture path
-        0.09f                      // scale
+        0.09f,// scale
+    "slug"
     );
     Monster bat5 = monster_create(
         1200.0f,          // x position
@@ -133,7 +140,8 @@ Level level5_create(void)
         1900.0f,          // patrol right boundary
         110.0f,           // patrol speed
         "bat.png", // texture path
-        0.06f             // scale
+        0.06f,// scale
+    "bat"
     );
     monster_list_add(&level.monsters, bat2);
     monster_list_add(&level.monsters, crab);
