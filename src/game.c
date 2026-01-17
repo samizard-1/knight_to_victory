@@ -570,8 +570,9 @@ void game_update(GameState *state)
                 }
                 else
                 {
-                    // Protection potion is active, consume it and prevent collision sequence
+                    // Protection potion is active, consume it and set cooldown to prevent re-collision
                     player_take_damage(&player, hazard->damage);
+                    state->hazard_cooldown = 3.0f; // 3 second cooldown to escape
                 }
             }
         }
@@ -654,8 +655,9 @@ void game_update(GameState *state)
                 }
                 else
                 {
-                    // Protection potion is active, consume it and prevent collision sequence
+                    // Protection potion is active, consume it and set cooldown to prevent re-collision
                     player_take_damage(&player, 1);
+                    state->hazard_cooldown = 3.0f; // 3 second cooldown to escape
                 }
             }
         }

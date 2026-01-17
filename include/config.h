@@ -20,6 +20,8 @@
 #define DAMAGE_DISPLAY_FIRE 2.0f        // Duration to display fire damage texture (in seconds)
 #define DAMAGE_DISPLAY_DUST 2.0f        // Duration to display dust damage texture (in seconds)
 #define RESPAWN_DELAY PAUSE_DURATION    // Delay before respawning player to level start (in seconds)
+#define PROTECTION_POTION_DURATION 5.0f // Duration of protection potion effect (in seconds)
+#define PROTECTION_POTION_GRACE_PERIOD 3.0f // Grace period after potion deactivates (in seconds)
 
 // Background settings
 #define MOUNTAIN_BASE_HEIGHT 500

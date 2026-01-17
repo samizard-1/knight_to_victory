@@ -65,6 +65,7 @@ Player player_create(float x, float y)
 
     // Initialize protection potion state
     p.protection_potion_active = false;
+    p.protection_potion_timer = 0.0f;
 
     // Initialize inventory system
     p.inventory = inventory_create();
@@ -136,6 +137,7 @@ void player_handle_input(Player *player)
             if (inventory_remove_loot(&player->inventory, PROTECTION_POTION, 1))
             {
                 player->protection_potion_active = true;
+                player->protection_potion_timer = PROTECTION_POTION_DURATION;
             }
         }
     }
@@ -154,6 +156,18 @@ void player_update(Player *player)
             player->active_damage_type = DAMAGE_TYPE_NONE;
         }
     }
+
+    // Update protection potion timer
+    if (player->protection_potion_active)
+    {
+        player->protection_potion_timer -= delta_time;
+        if (player->protection_potion_timer <= 0.0f)
+        {
+            player->protection_potion_active = false;
+            player->protection_potion_timer = 0.0f;
+        }
+    }
+
 
     // Apply gravity
     player->velocity.y += GRAVITY * delta_time;
@@ -446,8 +460,9 @@ void player_take_damage(Player *player, int damage)
     // Check if protection potion is active
     if (player->protection_potion_active)
     {
-        // Protection potion absorbs the damage
+        // Protection potion prevents this hit and is consumed
         player->protection_potion_active = false;
+        player->protection_potion_timer = 0.0f;
         return;
     }
 
