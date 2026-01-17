@@ -42,7 +42,7 @@ typedef struct
     int max_projectiles;           // Maximum projectiles player can carry
     int facing_direction;          // 1 for right, -1 for left
     bool is_using_sword;
-    bool is_ducking;           // True when player is using sword attack
+    bool is_ducking;               // True when player is using sword attack
     bool protection_potion_active; // True when protection potion is in effect
     float protection_potion_timer; // Timer for protection potion duration
     Inventory inventory;           // Inventory system for tracking collected loot

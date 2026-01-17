@@ -168,7 +168,6 @@ void player_update(Player *player)
         }
     }
 
-
     // Apply gravity
     player->velocity.y += GRAVITY * delta_time;
 
