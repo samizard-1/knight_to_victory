@@ -89,7 +89,7 @@ Level level4_create(void)
         150.0f,    // patrol speed
         "bat.png", // texture path
         0.35f,     // scale
-        "bat"      // monster type for loot lookup
+        "boss"     // monster type for loot lookup
     );
     Monster slug3 = monster_create(
         600.0f,             // x position

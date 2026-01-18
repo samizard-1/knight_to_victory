@@ -217,6 +217,28 @@ static void init_loot_system(GameState *state)
 
     // Set this as the default loot table for all monsters
     loot_system_set_default_table(&state->loot_system, default_table);
+
+    // Custom loot table for boss in level 4
+    // boss is a special larger bat with higher drop rates and better loot
+    LootTable boss_table = loot_table_create("boss", 4);
+
+    // Coins: 95% chance to drop 2 coins (higher chance and value than regular bat)
+    LootItemDef boss_coin_def = {.type = LOOT_COIN, .drop_chance = 0.95f, .value = 2, .scale = 0.03f};
+    loot_table_add_item(&boss_table, boss_coin_def);
+
+    // Health Potions: 50% chance to drop 1 health potion (higher than default)
+    LootItemDef boss_health_potion_def = {.type = LOOT_HEALTH_POTION, .drop_chance = 0.5f, .value = 1, .scale = 0.05f};
+    loot_table_add_item(&boss_table, boss_health_potion_def);
+
+    // Protection Potions: 35% chance to drop 1 protection potion (higher than default)
+    LootItemDef boss_protection_potion_def = {.type = PROTECTION_POTION, .drop_chance = 0.35f, .value = 1, .scale = 0.04f};
+    loot_table_add_item(&boss_table, boss_protection_potion_def);
+    // Fireballs: 70% chance to drop 1 fireball (higher than default)
+    LootItemDef boss_fireball_def = {.type = LOOT_FIREBALL, .drop_chance = 0.7f, .value = 1, .scale = 0.04f};
+    loot_table_add_item(&boss_table, boss_fireball_def);
+
+    // Add the custom boss table to the loot system
+    loot_system_add_table(&state->loot_system, boss_table);
 }
 
 void game_init(GameState *state)
