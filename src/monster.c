@@ -44,6 +44,7 @@ void monster_update(Monster *monster)
         // If monster is dead, increment dead texture timer
         monster->dead_texture_timer += GetFrameTime();
         return;
+        // make loot drop here later
     }
 
     // Run custom update first if provided
@@ -102,8 +103,8 @@ void monster_draw_hearts_default(Monster *monster, float screen_pos_x, float scr
 }
 
 void monster_draw(Monster *monster, float camera_x)
-{
-
+{  
+    
     if (!monster->active && monster->dead_texture_timer > MONSTER_DEAD_TEXTURE_TIME)
         return;
 

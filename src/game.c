@@ -223,22 +223,40 @@ static void init_loot_system(GameState *state)
     LootTable boss_table = loot_table_create("boss", 4);
 
     // Coins: 95% chance to drop 2 coins (higher chance and value than regular bat)
-    LootItemDef boss_coin_def = {.type = LOOT_COIN, .drop_chance = 0.95f, .value = 2, .scale = 0.03f};
+    LootItemDef boss_coin_def = {.type = LOOT_COIN, .drop_chance = 1.0f, .value = 5, .scale = 0.03f};
     loot_table_add_item(&boss_table, boss_coin_def);
 
     // Health Potions: 50% chance to drop 1 health potion (higher than default)
-    LootItemDef boss_health_potion_def = {.type = LOOT_HEALTH_POTION, .drop_chance = 0.5f, .value = 1, .scale = 0.05f};
+    LootItemDef boss_health_potion_def = {.type = LOOT_HEALTH_POTION, .drop_chance = 1.0f, .value = 1, .scale = 0.05f};
     loot_table_add_item(&boss_table, boss_health_potion_def);
 
     // Protection Potions: 35% chance to drop 1 protection potion (higher than default)
-    LootItemDef boss_protection_potion_def = {.type = PROTECTION_POTION, .drop_chance = 0.35f, .value = 1, .scale = 0.04f};
+    LootItemDef boss_protection_potion_def = {.type = PROTECTION_POTION, .drop_chance = 0.5f, .value = 1, .scale = 0.04f};
     loot_table_add_item(&boss_table, boss_protection_potion_def);
     // Fireballs: 70% chance to drop 1 fireball (higher than default)
-    LootItemDef boss_fireball_def = {.type = LOOT_FIREBALL, .drop_chance = 0.7f, .value = 1, .scale = 0.04f};
+    LootItemDef boss_fireball_def = {.type = LOOT_FIREBALL, .drop_chance = 1.0f, .value = 2, .scale = 0.04f};
     loot_table_add_item(&boss_table, boss_fireball_def);
 
     // Add the custom boss table to the loot system
     loot_system_add_table(&state->loot_system, boss_table);
+
+    LootTable dragon_table = loot_table_create("bat3", 4);
+
+    // Define individual loot drop entries with type, drop_chance, value, and scale
+    LootItemDef bat3_coin_def2 = {.type = LOOT_COIN, .drop_chance = 1.0f, .value = 10, .scale = 0.08f};
+    loot_table_add_item(&dragon_table, bat3_coin_def2);
+
+    LootItemDef bat3_health_potion_def2 = {.type = LOOT_HEALTH_POTION, .drop_chance = 1.0f, .value = 2, .scale = 0.05f};
+    loot_table_add_item(&dragon_table, bat3_health_potion_def2);
+
+    LootItemDef bat3_protection_potion_def2 = {.type = PROTECTION_POTION, .drop_chance = 1.0f, .value = 1, .scale = 0.05f};
+    loot_table_add_item(&dragon_table, bat3_health_potion_def2);
+
+    LootItemDef bat3_fireball_def2 = {.type = LOOT_FIREBALL, .drop_chance = 1.0f, .value = 10, .scale = 0.1f};
+    loot_table_add_item(&dragon_table, bat3_fireball_def2);
+
+    // Register the table with the loot system
+    loot_system_add_table(&state->loot_system, dragon_table);
 }
 
 void game_init(GameState *state)

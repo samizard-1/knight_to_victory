@@ -108,7 +108,7 @@ Level level6_create(void)
         140.0f,            // patrol speed
         "crab.png", // texture path
         0.19f,// scale
-    "bat"
+    "boss"
     );
     monster_list_add(&level.monsters, Crabono);
     Monster crab5 = monster_create(

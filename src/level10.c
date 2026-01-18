@@ -50,7 +50,7 @@ Level level10_create(void)
         90.0f,                  // patrol speed
         "../assets/dragon.png", // texture path
         0.5f,// scale
-    "dragon"
+    "dragon_boss"
     );
 
     // Apply dragon-specific customizations
@@ -58,13 +58,13 @@ Level level10_create(void)
 
     monster_list_add(&level.monsters, dragon);
     Monster baby1 = monster_create(
-        800.0f,                 // x position
+        1050.0f,                 // x position
         525.0f,                 // y position
         475.0f,                 // width
         300.0f,                 // height
         6,                     // max hearts
-        650.0f,                 // patrol left boundary
-        850.0f,                 // patrol right boundary
+        1050.0f,                 // patrol left boundary
+        1050.0f,                 // patrol right boundary
         135.0f,                  // patrol speed
         "../assets/baby_dragon.png", // texture path
         0.18f,// scale

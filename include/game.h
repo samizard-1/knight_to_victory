@@ -57,6 +57,7 @@ typedef struct
     int options_menu_selection;        // 0 = Volume Slider, 1 = Back
     GameScreen previous_screen;        // Previous screen before opening options
     LootSystem loot_system;            // Global loot system (shared across all levels)
+    LootTable boss_loot_table;        // Loot table for boss monsters
 } GameState;
 
 // Game functions
