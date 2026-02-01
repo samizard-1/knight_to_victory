@@ -25,11 +25,15 @@
             color: #333;
             overflow: hidden;
         }
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            overflow: visible !important;
+            clip: auto !important;
+            clip-path: none !important;
+        }
         #canvas {
             display: block !important;
-            max-width: 95% !important;
-            width: auto !important;
-            height: auto !important;
             margin: 5px auto !important;
             padding: 0 !important;
             border: none !important;
@@ -46,6 +50,7 @@
             text-align: center;
             flex-shrink: 0;
             overflow-y: auto;
+            overflow-x: hidden;
         }
         h1 { color: #667eea; margin-bottom: 5px; font-size: 1.2em; }
         p { margin-bottom: 5px; font-size: 0.9em; }
