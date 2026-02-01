@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knight To Victory - A Raylib Game</title>
+    
+    <!-- Meta tags for sharing -->
+    <meta name="description" content="Knight To Victory - A side-scrolling action game built with raylib">
+    <meta name="keywords" content="game, raylib, webassembly, action, adventure">
+    <meta name="author" content="Samizard">
+    
+    <!-- Open Graph meta tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Knight To Victory">
+    <meta property="og:description" content="A side-scrolling action game built with raylib">
+    <meta property="og:image" content="https://www.raylib.com/common/raylib_logo.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        
+        .game-wrapper {
+            margin: 20px 0;
+            border: 3px solid #667eea;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            text-align: left;
+        }
+        
+        .info h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .info p {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        
+        .controls {
+            margin-top: 15px;
+        }
+        
+        .controls h4 {
+            color: #764ba2;
+            margin-bottom: 8px;
+        }
+        
+        .controls ul {
+            text-align: left;
+            display: inline-block;
+        }
+        
+        .controls li {
+            margin: 4px 0;
+        }
+        
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            text-align: left;
+            min-height: 60px;
+            overflow-y: auto;
+            max-height: 150px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .loading {
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            color: #999;
+            font-size: 0.9em;
+        }
+        
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .subtitle {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚔️ Knight To Victory</h1>
+        <p class="subtitle">A side-scrolling action game built with Raylib</p>
+        
+        <div class="game-wrapper">
+            <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+        </div>
+        
+        <div class="info">
+            <h3>Welcome, Adventurer!</h3>
+            <p>Navigate through dangerous dungeons, defeat monsters, and collect loot to emerge victorious!</p>
+            
+            <div class="controls">
+                <h4>🎮 Controls</h4>
+                <ul>
+                    <li><strong>Arrow Keys</strong> - Move left/right and jump</li>
+                    <li><strong>Space</strong> - Attack/Jump</li>
+                    <li><strong>ESC</strong> - Pause menu</li>
+                </ul>
+            </div>
+            
+            <div class="status" id="status">
+                <span class="loading">Loading game...</span>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Built with <a href="https://www.raylib.com/" target="_blank">raylib</a> and compiled to WebAssembly</p>
+            <p>&copy; 2024 Samizard. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script type='text/javascript'>
+        var Module = {
+            print: (function() {
+                var element = document.getElementById('status');
+                if (element) element.value = '';
+                return function(text) {
+                    if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+                    console.log(text);
+                    if (element) {
+                        element.textContent += text + "\n";
+                        element.scrollTop = element.scrollHeight;
+                    }
+                };
+            })(),
+            printErr: function(text) {
+                if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+                console.error(text);
+                var element = document.getElementById('status');
+                if (element) {
+                    element.textContent += "ERROR: " + text + "\n";
+                    element.scrollTop = element.scrollHeight;
+                }
+            },
+            canvas: (function() {
+                var canvas = document.getElementById('canvas');
+                canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+                return canvas;
+            })(),
+            setStatus: function(text) {
+                if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+                if (text === Module.setStatus.last.text) return;
+                var m = text.match(/([^(]+)\((\d+(?:\.\d+)?)\/(\d+)\)/);
+                var now = Date.now();
+                if (m && now - Module.setStatus.last.time < 30) return;
+                Module.setStatus.last.time = now;
+                Module.setStatus.last.text = text;
+                if (m) {
+                    text = m[1];
+                    progressElement.value = parseInt(m[2])*100/parseInt(m[3]);
+                    progressElement.hidden = false;
+                    divStatus.hidden = false;
+                } else {
+                    progressElement.value = null;
+                    progressElement.hidden = true;
+                    if (!text) divStatus.hidden = true;
+                }
+                divStatus.innerHTML = text;
+            },
+            totalDependencies: 0,
+            monitorRunDependencies: function(left) {
+                this.totalDependencies = Math.max(this.totalDependencies, left);
+                Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+            }
+        };
+        Module.setStatus('Downloading...');
+        window.onerror = function() {
+            Module.setStatus('Exception thrown, see JavaScript console');
+            spinnerElement.style.display = 'none';
+            Module.setStatus = function(text) {
+                if (text) Module.printErr('[post-exception status] ' + text);
+            };
+        };
+    </script>
+    {{{ SCRIPT }}}
+</body>
+</html>

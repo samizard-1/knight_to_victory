@@ -4,6 +4,14 @@ project(raylib_game)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+# Detect if building for web
+if(DEFINED EMSCRIPTEN OR DEFINED ENV{EMSCRIPTEN} OR CMAKE_CXX_COMPILER MATCHES "emcripten")
+    set(BUILD_FOR_WEB TRUE)
+    message(STATUS "Building for WebAssembly (Emscripten detected)")
+else()
+    set(BUILD_FOR_WEB FALSE)
+endif()
+
 # Add raylib subdirectory (assumes raylib is in vendor/raylib)
 add_subdirectory(vendor/raylib)
 
@@ -82,7 +90,10 @@ if(APPLE)
 endif()
 
 # Copy assets to build directory (for both regular and bundle builds)
-if(APPLE)
+if(BUILD_FOR_WEB)
+    # For WebAssembly, preload assets using Emscripten
+    target_link_options(${EXECUTABLE_NAME} PRIVATE "SHELL:--preload-file ${CMAKE_CURRENT_SOURCE_DIR}/assets@/assets")
+elseif(APPLE)
     # For macOS bundles, copy to Contents/Resources
     add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -98,6 +109,29 @@ else()
         ${CMAKE_BINARY_DIR}/assets
         COMMENT "Copying assets to build directory"
     )
+endif()
+
+# Web-specific settings
+if(BUILD_FOR_WEB)
+    # Set output to HTML
+    set_target_properties(${EXECUTABLE_NAME} PROPERTIES SUFFIX ".html")
+    
+    # Emscripten linker flags
+    target_link_options(${EXECUTABLE_NAME} PRIVATE 
+        "SHELL:-s USE_GLFW=3"
+        "SHELL:-s WASM=1"
+        "SHELL:-s FORCE_FILESYSTEM=1"
+        "SHELL:-s TOTAL_MEMORY=256MB"
+        "SHELL:-s ALLOW_MEMORY_GROWTH=1"
+        "SHELL:--shell-file ${CMAKE_CURRENT_SOURCE_DIR}/src/minshell.html"
+    )
+    
+    # Emscripten compiler flags for optimization
+    if(CMAKE_BUILD_TYPE MATCHES Release)
+        target_compile_options(${EXECUTABLE_NAME} PRIVATE "-O3")
+    else()
+        target_compile_options(${EXECUTABLE_NAME} PRIVATE "-g" "-s" "ASSERTIONS=1")
+    endif()
 endif()
 
 # Build test executable for loot system

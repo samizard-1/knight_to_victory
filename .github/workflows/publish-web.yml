@@ -1,0 +1,106 @@
+name: Build and Publish to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'include/**'
+      - 'assets/**'
+      - 'CMakeLists.txt'
+      - '.github/workflows/publish-web.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    env:
+      PROJECT_NAME: sam_scroll_game
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Checkout raylib
+        uses: actions/checkout@v4
+        with:
+          repository: raysan5/raylib
+          path: raylib
+          ref: master
+      
+      - name: Setup Emscripten SDK
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 3.1.64
+          actions-cache-folder: 'emsdk-cache'
+      
+      - name: Verify Emscripten
+        run: |
+          emcc --version
+          em++ --version
+      
+      - name: Build raylib for WebAssembly
+        run: |
+          cd raylib/src
+          make PLATFORM=PLATFORM_WEB RAYLIB_BUILD_MODE=RELEASE -B
+      
+      - name: Create build directory
+        run: mkdir -p build
+      
+      - name: Configure CMake for WebAssembly
+        run: |
+          emcmake cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DPLATFORM=Web \
+            -S .
+      
+      - name: Build WebAssembly
+        run: |
+          cd build
+          make
+      
+      - name: Create web output directory
+        run: mkdir -p web_output
+      
+      - name: Copy build artifacts
+        run: |
+          # Copy the HTML file
+          cp build/game.html web_output/index.html
+          # Copy WebAssembly and JavaScript files
+          cp build/game.wasm web_output/game.wasm
+          cp build/game.js web_output/game.js
+          # Copy data files if they exist
+          if [ -f build/game.data ]; then
+            cp build/game.data web_output/game.data
+          fi
+      
+      - name: Copy assets directory to web output
+        run: |
+          cp -r assets web_output/assets
+          echo "Web output directory contents:"
+          find web_output -type f | head -20
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Upload artifact to Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'web_output'
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

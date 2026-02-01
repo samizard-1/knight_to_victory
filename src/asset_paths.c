@@ -3,6 +3,10 @@
 #include <limits.h>
 #include <string.h>
 
+#if defined(PLATFORM_WEB) || defined(__EMSCRIPTEN__)
+// For web builds, assets are preloaded at /assets
+#define ASSET_PATH "/assets"
+#else
 #ifdef _WIN32
 #include <windows.h>
 #ifndef PATH_MAX
@@ -14,11 +18,17 @@
 #else
 #include <unistd.h>
 #endif
+#endif
 
 static char asset_base_path[PATH_MAX] = {0};
 
 void init_asset_paths(void)
 {
+#if defined(PLATFORM_WEB) || defined(__EMSCRIPTEN__)
+    // For web builds, assets are in /assets (preloaded by Emscripten)
+    strcpy(asset_base_path, ASSET_PATH);
+    fprintf(stderr, "DEBUG: Web build - assets path set to: %s\n", asset_base_path);
+#else
     char executable_path[PATH_MAX];
     memset(executable_path, 0, sizeof(executable_path));
 
@@ -99,6 +109,7 @@ void init_asset_paths(void)
 
     snprintf(asset_base_path, sizeof(asset_base_path), "%s/assets", executable_path);
     fprintf(stderr, "DEBUG: Final asset base path set to: %s\n", asset_base_path);
+#endif
 }
 
 const char *get_asset_path(const char *filename)
