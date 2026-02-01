@@ -50,6 +50,9 @@ int main(void)
         PlayMusicStream(background_music);
     }
 
+    // Pass the background music to game state so volume control works
+    game_state_global.background_music = background_music;
+
 #if defined(PLATFORM_WEB)
     // For web, use Emscripten's main loop
     emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
