@@ -505,6 +505,7 @@ void test_inventory_mixed_types()
     inventory_add_loot(&inv, LOOT_FIREBALL, 20);
     inventory_add_loot(&inv, LOOT_HEALTH_POTION, 5);
     inventory_add_loot(&inv, PROTECTION_POTION, 3);
+    inventory_add_loot(&inv, LOOT_BOOST_POTION, 2);
 
     test_assert_equal_int("inventory_mixed_types", inventory_get_count(&inv, LOOT_COIN), 50,
                           "Coins count correct");
@@ -514,6 +515,8 @@ void test_inventory_mixed_types()
                           "Health potions count correct");
     test_assert_equal_int("inventory_mixed_types", inventory_get_count(&inv, PROTECTION_POTION), 3,
                           "Scrolls count correct");
+    test_assert_equal_int("inventory_mixed_types", inventory_get_count(&inv, LOOT_BOOST_POTION), 2,
+                          "Boost potions count correct");
 }
 
 void test_invalid_loot_type_handling()

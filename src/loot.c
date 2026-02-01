@@ -152,6 +152,9 @@ Loot loot_create(LootType type, Vector2 spawn_pos, int value, const Inventory *i
     case LOOT_FIREBALL:
         loot.scale = 0.04f;
         break;
+    case LOOT_BOOST_POTION:
+        loot.scale = 0.2f;
+        break;
     default:
         loot.scale = 0.03f;
     }
@@ -314,6 +317,9 @@ static Texture2D load_loot_texture(LootType type)
     case LOOT_FIREBALL:
         texture_path = "fireball.png";
         break;
+    case LOOT_BOOST_POTION:
+    texture_path = "speed_potion.png";
+    break;
     default:
         return (Texture2D){0};
     }
@@ -425,6 +431,10 @@ void inventory_draw_ui(const Inventory *inv, int screen_width, int screen_height
             case LOOT_FIREBALL:
                 icon_color = ORANGE;
                 type_name = "F";
+                break;
+            case LOOT_BOOST_POTION:
+                icon_color = PURPLE;
+                type_name = "B";
                 break;
             default:
                 icon_color = GRAY;

@@ -36,7 +36,7 @@ Level level16_create(void)
         goal                       // level goal
     );
 
-    Hazard dust_tornado3 = {
+    Hazard q = {
         .type = HAZARD_DUST_STORM,
         .bounds = {1000.0f, 350.0f, 150.0f, 250.0f}, // x, y, width, height (below ground)
         .damage = 1,                                // Lose 1 heart
@@ -47,12 +47,12 @@ Level level16_create(void)
         .patrol_right_bound = 1000.0f,
         .patrol_speed = 80.0f,
         .can_fade = true}; // Set to false initially
-    hazard_list_add(&level.hazards, dust_tornado3);
+    hazard_list_add(&level.hazards, q);
 
     // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
     hazard_init_fade(&level.hazards.hazards[0], 1.0f, 1.0f, 1.0f, 1.0f);
 
-        Hazard dust_tornado4 = {
+    Hazard w = {
         .type = HAZARD_DUST_STORM,
         .bounds = {1400.0f, 300.0f, 150.0f, 300.0f}, // x, y, width, height (below ground)
         .damage = 1,                                // Lose 1 heart
@@ -63,12 +63,12 @@ Level level16_create(void)
         .patrol_right_bound = 1400.0f,
         .patrol_speed = 50.0f,
         .can_fade = true}; // Set to false initially
-    hazard_list_add(&level.hazards, dust_tornado4);
+    hazard_list_add(&level.hazards, w);
 
     // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
     hazard_init_fade(&level.hazards.hazards[1], 1.0f, 1.0f, 1.0f, 1.0f); 
 
-        Hazard dust_tornado5 = {
+    Hazard dust_tornado5 = {
         .type = HAZARD_DUST_STORM,
         .bounds = {1800.0f, 350.0f, 150.0f, 250.0f}, // x, y, width, height (below ground)
         .damage = 1,                                // Lose 1 heart
@@ -82,9 +82,9 @@ Level level16_create(void)
     hazard_list_add(&level.hazards, dust_tornado5);
 
     // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
-    hazard_init_fade(&level.hazards.hazards[2], 1.0f, 2.0f, 1.0f, 15.0f);
+    hazard_init_fade(&level.hazards.hazards[2], 1.0f, 1.0f, 1.0f, 1.0f);
 
-        Hazard dust_tornado6 = {
+    Hazard dust_tornado6 = {
         .type = HAZARD_DUST_STORM,
         .bounds = {2200.0f, 300.0f, 160.0f, 300.0f}, // x, y, width, height (below ground)
         .damage = 1,                                // Lose 1 heart
@@ -95,12 +95,12 @@ Level level16_create(void)
         .patrol_right_bound = 2200.0f,
         .patrol_speed = 50.0f,
         .can_fade = true}; // Set to false initially
-    hazard_list_add(&level.hazards, dust_tornado4);
+    hazard_list_add(&level.hazards, dust_tornado6);
 
     // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
-    hazard_init_fade(&level.hazards.hazards[3], 1.0f, 2.0f, 1.0f, 5.0f);
+    hazard_init_fade(&level.hazards.hazards[3], 1.0f, 1.0f, 1.0f, 1.0f);
     
-        Hazard dust_tornado7 = {
+    Hazard dust_tornado7 = {
         .type = HAZARD_DUST_STORM,
         .bounds = {2600.0f, 350.0f, 150.0f, 250.0f}, // x, y, width, height (below ground)
         .damage = 1,                                // Lose 1 heart
@@ -114,9 +114,9 @@ Level level16_create(void)
     hazard_list_add(&level.hazards, dust_tornado7);
 
     // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
-    hazard_init_fade(&level.hazards.hazards[4], 1.0f, 2.0f, 1.0f, 15.0f);
+    hazard_init_fade(&level.hazards.hazards[4], 1.0f, 1.0f, 1.0f, 1.0f);
 
-        Hazard dust_tornado8 = {
+    Hazard dust_tornado8 = {
         .type = HAZARD_DUST_STORM,
         .bounds = {3000.0f, 300.0f, 160.0f, 300.0f}, // x, y, width, height (below ground)
         .damage = 1,                                // Lose 1 heart
@@ -127,10 +127,10 @@ Level level16_create(void)
         .patrol_right_bound = 3000.0f,
         .patrol_speed = 50.0f,
         .can_fade = true}; // Set to false initially
-    hazard_list_add(&level.hazards, dust_tornado4);
+    hazard_list_add(&level.hazards, dust_tornado8);
 
     // Initialize fade properties (0 sec opaque, 2 sec fade out, 1 sec gap, 5 sec fade in)
-    hazard_init_fade(&level.hazards.hazards[5], 1.0f, 2.0f, 1.0f, 5.0f); 
+    hazard_init_fade(&level.hazards.hazards[5], 1.0f, 1.0f, 1.0f, 5.0f); 
     
     return level;
 }

@@ -48,7 +48,7 @@ Level level3_create(void)
         80.0f,              // patrol speed
         "monster_slug.png", // texture path
         0.1f,               // scale
-        "slug"              // monster type for loot lookup
+        "chance"              // monster type for loot lookup
     );
     monster_list_add(&level.monsters, slug);
     // Add bat monster patrolling in the middle area

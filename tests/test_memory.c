@@ -164,12 +164,14 @@ void test_inventory_stress()
     inventory_add_loot(&inventory, LOOT_FIREBALL, 50000);
     inventory_add_loot(&inventory, LOOT_HEALTH_POTION, 25000);
     inventory_add_loot(&inventory, PROTECTION_POTION, 10000);
+    inventory_add_loot(&inventory, LOOT_BOOST_POTION, 20000);
 
     printf("Added 100k coins, 50k fireballs, 25k potions, 10k scrolls\n");
     printf("Total items: %d\n",
            inventory.counts[LOOT_COIN] +
                inventory.counts[LOOT_FIREBALL] +
                inventory.counts[LOOT_HEALTH_POTION] +
+               inventory.counts[LOOT_BOOST_POTION] +
                inventory.counts[PROTECTION_POTION]);
 
     // Verify retrieval

@@ -6,12 +6,14 @@
 #include "loot.h"
 #include <stddef.h>
 
+float NORMAL_PLAYER_SPEED = 200.0f;
+
 Player player_create(float x, float y)
 {
     Player p;
     p.position = (Vector2){x, y};
     p.velocity = (Vector2){0, 0};
-    p.speed = 200.0f;
+    p.speed = NORMAL_PLAYER_SPEED;
     p.jump_power = 400.0f;
     p.is_jumping = false;
 
@@ -45,6 +47,7 @@ Player player_create(float x, float y)
 
     // Load protection potion texture for inventory display
     p.protection_potion_texture = LoadTexture(get_asset_path("protection_potion.png"));
+    p.boost_potion_texture = LoadTexture(get_asset_path("speed_potion.png"));
 
     // Initialize health
     p.hearts = INITIAL_HEARTS;
@@ -55,7 +58,7 @@ Player player_create(float x, float y)
 
     // Initialize projectile inventory
     p.projectile_inventory = 0; // Start with 0 projectiles
-    p.max_projectiles = 10;     // Maximum 10 projectiles can carry
+    p.max_projectiles = 50;     // Maximum 50 projectiles can carry
 
     // Initialize facing direction (1 = right, -1 = left)
     p.facing_direction = 1;
@@ -65,7 +68,9 @@ Player player_create(float x, float y)
 
     // Initialize protection potion state
     p.protection_potion_active = false;
+    p.boost_potion_active = false;
     p.protection_potion_timer = 0.0f;
+    p.boost_potion_timer = 0.0f;
 
     // Initialize inventory system
     p.inventory = inventory_create();
@@ -78,6 +83,7 @@ Player player_create(float x, float y)
 void player_handle_input(Player *player)
 {
     // Horizontal movement
+    player->boost_potion_timer = 0.0f;
     if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT))
     {
         player->velocity.x = -player->speed;
@@ -141,6 +147,28 @@ void player_handle_input(Player *player)
             }
         }
     }
+    if (IsKeyPressed(KEY_B))
+    {
+        if (player->inventory.counts[LOOT_BOOST_POTION] > 0 && player->projectile_inventory < player->max_projectiles)
+        {
+            
+            if (inventory_remove_loot(&player->inventory, LOOT_BOOST_POTION, 1))
+            {
+                player->projectile_inventory += 1;
+                if (player->projectile_inventory > player->max_projectiles)
+                {
+                    player->projectile_inventory = player->max_projectiles;
+                }
+            }
+        }
+        player->boost_potion_active = true;
+        player->max_hearts = player->max_hearts + 1;
+    }
+    else
+    {
+        player->speed = NORMAL_PLAYER_SPEED;
+        player->boost_potion_active = false;
+    }
 }
 
 void player_update(Player *player)
@@ -172,8 +200,15 @@ void player_update(Player *player)
     player->velocity.y += GRAVITY * delta_time;
 
     // Update position
-    player->position.x += player->velocity.x * delta_time;
-    player->position.y += player->velocity.y * delta_time;
+    if (player->boost_potion_active)
+    {    
+        player->position.x += player->velocity.x * delta_time * 10;
+        player->position.y += player->velocity.y * delta_time * 10;
+    }
+    else{
+        player->position.x += player->velocity.x * delta_time;
+        player->position.y += player->velocity.y * delta_time;
+    }
 
     // Ground collision
     if (player->position.y + player->height >= GROUND_Y)
@@ -328,6 +363,7 @@ void player_draw(Player *player, float camera_x)
             break;
 
         case DAMAGE_TYPE_DUST:
+            damage_scale *= 0.52f; // Slightly smaller for dust effect
             damage_texture = player->dust_texture;
             damage_flipleft_texture = player->dust_flipleft_texture;
             break;

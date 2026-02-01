@@ -204,16 +204,19 @@ static void init_loot_system(GameState *state)
     loot_table_add_item(&default_table, coin_def);
 
     // Health Potions: 30% chance to drop 1 health potion
-    LootItemDef health_potion_def = {.type = LOOT_HEALTH_POTION, .drop_chance = 0.3f, .value = 1, .scale = 0.05f};
+    LootItemDef health_potion_def = {.type = LOOT_HEALTH_POTION, .drop_chance = 0.09f, .value = 1, .scale = 0.05f};
     loot_table_add_item(&default_table, health_potion_def);
 
     // Protection Potions: 15% chance to drop 1 protection potion
-    LootItemDef protection_potion_def = {.type = PROTECTION_POTION, .drop_chance = 0.15f, .value = 1, .scale = 0.04f};
+    LootItemDef protection_potion_def = {.type = PROTECTION_POTION, .drop_chance = 0.06f, .value = 1, .scale = 0.04f};
     loot_table_add_item(&default_table, protection_potion_def);
 
     // Fireballs: 40% chance to drop 1 fireball
-    LootItemDef fireball_def = {.type = LOOT_FIREBALL, .drop_chance = 0.4f, .value = 1, .scale = 0.04f};
+    LootItemDef fireball_def = {.type = LOOT_FIREBALL, .drop_chance = 0.2f, .value = 1, .scale = 0.04f};
     loot_table_add_item(&default_table, fireball_def);
+
+    LootItemDef speed_potion_def = {.type = LOOT_BOOST_POTION, .drop_chance = 0.02f, .value = 1, .scale = 0.04f};
+    loot_table_add_item(&default_table, speed_potion_def);
 
     // Set this as the default loot table for all monsters
     loot_system_set_default_table(&state->loot_system, default_table);
@@ -236,6 +239,8 @@ static void init_loot_system(GameState *state)
     // Fireballs: 70% chance to drop 1 fireball (higher than default)
     LootItemDef boss_fireball_def = {.type = LOOT_FIREBALL, .drop_chance = 1.0f, .value = 2, .scale = 0.04f};
     loot_table_add_item(&boss_table, boss_fireball_def);
+    LootItemDef boss_speed_potion_def = {.type = LOOT_BOOST_POTION, .drop_chance = 0.2f, .value = 1, .scale = 0.04f};
+    loot_table_add_item(&default_table, boss_speed_potion_def);
 
     // Add the custom boss table to the loot system
     loot_system_add_table(&state->loot_system, boss_table);
@@ -257,6 +262,22 @@ static void init_loot_system(GameState *state)
 
     // Register the table with the loot system
     loot_system_add_table(&state->loot_system, dragon_table);
+
+    LootTable chance = loot_table_create("chance", 2);
+
+    LootItemDef chance_coin_def = {.type = LOOT_COIN, .drop_chance = 0.7f, .value = 15, .scale = 0.06f};
+    loot_table_add_item(&chance, chance_coin_def);
+
+    LootItemDef chance_health_potion_def = {.type = LOOT_HEALTH_POTION, .drop_chance = 0.8f, .value = 3, .scale = 0.06f};
+    loot_table_add_item(&chance, chance_health_potion_def);
+
+    LootItemDef chance_protection_potion_def = {.type = PROTECTION_POTION, .drop_chance = 0.7f, .value = 2, .scale = 0.06f};
+    loot_table_add_item(&chance, chance_protection_potion_def);
+
+    LootItemDef chance_fireball_def = {.type = LOOT_FIREBALL, .drop_chance = 0.9f, .value = 10, .scale = 0.06f};
+    loot_table_add_item(&chance, chance_fireball_def);
+    
+    loot_system_add_table(&state->loot_system, chance);
 }
 
 void game_init(GameState *state)
@@ -549,6 +570,8 @@ void game_update(GameState *state)
             pickup_spawner_update(&current_level->spawners.spawners[i], &current_level->pickups);
         }
     }
+                
+
     // Check for hazard collisions (only if cooldown expired)
     Rectangle player_rect = {
         player.position.x,

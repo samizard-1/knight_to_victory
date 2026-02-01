@@ -42,7 +42,7 @@ Level level9_create(void)
         800.0f,                       // x position
         550.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         2,                            // max hearts
         650.0f,                       // patrol left boundary
         1100.0f,                      // patrol right boundary
@@ -58,7 +58,7 @@ Level level9_create(void)
         1300.0f,                      // x position
         520.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         3,                            // max hearts
         1100.0f,                      // patrol left boundary
         1900.0f,                      // patrol right boundary
@@ -74,7 +74,7 @@ Level level9_create(void)
         800.0f,                       // x position
         560.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         2,                            // max hearts
         1900.0f,                      // patrol left boundary
         2300.0f,                      // patrol right boundary
@@ -90,7 +90,7 @@ Level level9_create(void)
         1300.0f,                      // x position
         535.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         3,                            // max hearts
         2300.0f,                      // patrol left boundary
         2700.0f,                      // patrol right boundary
@@ -105,15 +105,15 @@ Level level9_create(void)
     Monster guard4 = monster_create(
         1300.0f,                      // x position
         425.0f,                       // y position
-        100.0f,                       // width
-        180.0f,                       // height - increased to block underpass
+        70.0f,                       // width
+        50.0f,                       // height - increased to block underpass
         3,                            // max hearts - very tough!
         800.0f,                       // patrol left boundary
         3500.0f,                      // patrol right boundary
         80.0f,                       // patrol speed
         "../assets/bat.png", // texture path
         0.1f,// scale - really big!
-    "bat"
+    "chance"
     );
     monster_list_add(&level.monsters, guard4);
 
@@ -122,7 +122,7 @@ Level level9_create(void)
         800.0f,                       // x position
         549.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         3,                            // max hearts
         1900.0f,                      // patrol left boundary
         2700.0f,                      // patrol right boundary
@@ -138,7 +138,7 @@ Level level9_create(void)
         1300.0f,                      // x position
         535.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         2,                            // max hearts
         800.0f,                       // patrol left boundary
         1900.0f,                      // patrol right boundary
@@ -152,7 +152,7 @@ Level level9_create(void)
         1300.0f,                      // x position
         520.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         3,                            // max hearts
         3100.0f,                      // patrol left boundary
         3500.0f,                      // patrol right boundary
@@ -166,7 +166,7 @@ Level level9_create(void)
         1300.0f,                      // x position
         520.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         2,                            // max hearts
         2700.0f,                      // patrol left boundary
         3100.0f,                      // patrol right boundary
@@ -181,7 +181,7 @@ Level level9_create(void)
         800.0f,                       // x position
         490.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         2,                            // max hearts
         1700.0f,                      // patrol left boundary
         2100.0f,                      // patrol right boundary
@@ -197,7 +197,7 @@ Level level9_create(void)
         1300.0f,                      // x position
         490.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         3,                            // max hearts
         2100.0f,                      // patrol left boundary
         2500.0f,                      // patrol right boundary
@@ -212,8 +212,8 @@ Level level9_create(void)
     Monster guard11 = monster_create(
         1300.0f,                      // x position
         450.0f,                       // y position
-        100.0f,                       // width
-        180.0f,                       // height - increased to block underpass
+        70.0f,                       // width
+        50.0f,                       // height - increased to block underpass
         3,                            // max hearts - very tough!
         600.0f,                       // patrol left boundary
         3300.0f,                      // patrol right boundary
@@ -229,7 +229,7 @@ Level level9_create(void)
         800.0f,                       // x position
         490.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         3,                            // max hearts
         1700.0f,                      // patrol left boundary
         2500.0f,                      // patrol right boundary
@@ -245,7 +245,7 @@ Level level9_create(void)
         1300.0f,                      // x position
         490.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         2,                            // max hearts
         600.0f,                       // patrol left boundary
         1700.0f,                      // patrol right boundary
@@ -259,7 +259,7 @@ Level level9_create(void)
         1300.0f,                      // x position
         490.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         3,                            // max hearts
         2900.0f,                      // patrol left boundary
         3300.0f,                      // patrol right boundary
@@ -273,7 +273,7 @@ Level level9_create(void)
         1300.0f,                      // x position
         490.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         2,                            // max hearts
         2500.0f,                      // patrol left boundary
         2900.0f,                      // patrol right boundary
@@ -289,7 +289,7 @@ Level level9_create(void)
         800.0f,                       // x position
         490.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         3,                            // max hearts
         1800.0f,                      // patrol left boundary
         2600.0f,                      // patrol right boundary
@@ -305,7 +305,7 @@ Level level9_create(void)
         1300.0f,                      // x position
         490.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         2,                            // max hearts
         700.0f,                       // patrol left boundary
         1800.0f,                      // patrol right boundary
@@ -319,7 +319,7 @@ Level level9_create(void)
         1300.0f,                      // x position
         490.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         3,                            // max hearts
         3000.0f,                      // patrol left boundary
         3400.0f,                      // patrol right boundary
@@ -333,14 +333,14 @@ Level level9_create(void)
         1300.0f,                      // x position
         490.0f,                       // y position
         70.0f,                        // width
-        70.0f,                        // height
+        50.0f,                        // height
         2,                            // max hearts
         2600.0f,                      // patrol left boundary
         3000.0f,                      // patrol right boundary
         140.0f,                       // patrol speed
         "../assets/bat.png", // texture path
         0.08f,// scale
-    "bat"
+    "chance"
     );
     monster_list_add(&level.monsters, guard19);
 

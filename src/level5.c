@@ -88,7 +88,7 @@ Level level5_create(void)
         1600.0f,          // patrol right boundary
         150.0f,           // patrol speed
         "bat.png", // texture path
-        0.05f,// scale
+        0.4f,// scale
     "boss"
     );
     Monster slug3 = monster_create(

@@ -122,7 +122,7 @@ Level level6_create(void)
         170.0f,            // patrol speed
         "crab.png", // texture path
         0.12f,// scale
-    "bat"
+    "chance"
     );
     monster_list_add(&level.monsters, crab5);
 

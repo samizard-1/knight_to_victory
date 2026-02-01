@@ -48,7 +48,7 @@ Level level8_create(void)
         120.0f,                    // patrol speed
         "monster_slug.png", // texture path
         0.08f,// scale
-    "slug"
+    "DEFAULT"
     );
     monster_list_add(&level.monsters, slug1);
 
@@ -64,7 +64,7 @@ Level level8_create(void)
         140.0f,                    // patrol speed
         "monster_slug.png", // texture path
         0.16f,// scale
-    "slug"
+    "DEFAULT"
     );
     monster_list_add(&level.monsters, slug2);
 
@@ -80,7 +80,7 @@ Level level8_create(void)
         120.0f,                    // patrol speed
         "monster_slug.png", // texture path
         0.09f,// scale
-    "slug"
+    "DEFAULT"
     );
     monster_list_add(&level.monsters, slug3);
 
@@ -96,7 +96,7 @@ Level level8_create(void)
         100.0f,                    // patrol speed
         "monster_slug.png", // texture path
         0.14f,// scale
-    "slug"
+    "DEFAULT"
     );
     monster_list_add(&level.monsters, slug4);
 
@@ -112,7 +112,7 @@ Level level8_create(void)
         80.0f,                     // patrol speed
         "monster_slug.png", // texture path
         0.35f,// scale - really big!
-    "slug"
+    "boss"
     );
     monster_list_add(&level.monsters, Sluggato);
 
@@ -128,7 +128,7 @@ Level level8_create(void)
         110.0f,                    // patrol speed
         "monster_slug.png", // texture path
         0.11f,// scale
-    "slug"
+    "DEFAULT"
     );
     monster_list_add(&level.monsters, slug5);
 
@@ -144,7 +144,7 @@ Level level8_create(void)
         100.0f,                    // patrol speed
         "monster_slug.png", // texture path
         0.13f,// scale
-    "slug"
+    "DEFAULT"
     );
     monster_list_add(&level.monsters, slug6);
     Monster slug7 = monster_create(
@@ -158,7 +158,7 @@ Level level8_create(void)
         90.0f,                     // patrol speed
         "monster_slug.png", // texture path
         0.16f,// scale
-    "slug"
+    "chance"
     );
     monster_list_add(&level.monsters, slug7);
     Monster slug8 = monster_create(
@@ -172,7 +172,7 @@ Level level8_create(void)
         90.0f,                     // patrol speed
         "monster_slug.png", // texture path
         0.16f,// scale
-    "slug"
+    "DEFAULT"
     );
     monster_list_add(&level.monsters, slug8);
 

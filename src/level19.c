@@ -192,7 +192,7 @@ Level level19_create(void)
     hazard_list_add(&level.hazards, trial_jet);
 
     // Initialize fade properties (0 sec opaque, 0.5 sec fade out, 0.5 sec gap, 0.5 sec fade in)
-    hazard_init_fade(&level.hazards.hazards[1], 1.0f, 0.0f, 3.0f, 0.0f);
+    hazard_init_fade(&level.hazards.hazards[4], 1.0f, 0.0f, 3.0f, 0.0f);
 
     Hazard trial_jet2 = {
         .type = HAZARD_LAVA_JET,
@@ -209,7 +209,7 @@ Level level19_create(void)
     hazard_list_add(&level.hazards, trial_jet2);
 
     // Initialize fade properties (0 sec opaque, 0.5 sec fade out, 0.5 sec gap, 0.5 sec fade in)
-    hazard_init_fade(&level.hazards.hazards[2], 1.0f, 0.0f, 3.0f, 0.0f);
+    hazard_init_fade(&level.hazards.hazards[5], 1.0f, 0.0f, 3.0f, 0.0f);
 
     Monster trial_dragon = monster_create(
         3600.0f,            // x position

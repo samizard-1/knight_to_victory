@@ -31,6 +31,7 @@ typedef struct
     Texture2D ducking_texture;
     Texture2D ducking_flipleft_texture;
     Texture2D protection_potion_texture;
+    Texture2D boost_potion_texture;
     Rectangle sword_hitbox;
     float scale;
     int hearts;
@@ -44,7 +45,10 @@ typedef struct
     bool is_using_sword;
     bool is_ducking;               // True when player is using sword attack
     bool protection_potion_active; // True when protection potion is in effect
-    float protection_potion_timer; // Timer for protection potion duration
+    float protection_potion_timer;
+    bool boost_potion_active;
+    float boost_potion_timer;
+    float boost_potion_timer_interval; // Timer for protection potion duration
     Inventory inventory;           // Inventory system for tracking collected loot
 
 } Player;

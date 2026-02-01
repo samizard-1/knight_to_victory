@@ -9,7 +9,8 @@ typedef enum
     LOOT_COIN,          // Currency/points
     LOOT_HEALTH_POTION, // Restore health
     PROTECTION_POTION,  // Special item
-    LOOT_FIREBALL,      // Projectile ammunition (formerly PICKUP_FIREBALL)
+    LOOT_FIREBALL, 
+    LOOT_BOOST_POTION,     // Projectile ammunition (formerly PICKUP_FIREBALL)
     LOOT_TYPE_COUNT     // Total number of loot types
 } LootType;
 
