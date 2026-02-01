@@ -55,6 +55,67 @@ cmake --build .
 ./game
 ```
 
+### Building for Web (WebAssembly)
+
+To build the game as a WebAssembly application and test it locally:
+
+#### Prerequisites for Web Build
+- Emscripten SDK ([install guide](https://emscripten.org/docs/getting_started/downloads.html))
+- Python 3 (for local web server)
+
+#### Local Build Steps
+
+```bash
+# 1. Setup Emscripten (one time only)
+# Follow: https://emscripten.org/docs/getting_started/downloads.html
+# Then activate it in your shell:
+source ~/emsdk/emsdk_env.sh
+
+# 2. Create a separate build directory for web
+mkdir build_web
+cd build_web
+
+# 3. Configure with Emscripten
+emcmake cmake -DCMAKE_BUILD_TYPE=Release -S ..
+
+# 4. Build
+make
+
+# 5. Start a local web server
+python3 -m http.server 8000
+
+# 6. Open browser
+# Visit: http://localhost:8000/game.html
+```
+
+#### Troubleshooting Web Build
+
+**Issue: Build fails with "emcmake not found"**
+- Solution: Make sure you've run `source ~/emsdk/emsdk_env.sh` in your terminal
+
+**Issue: Old cached version displays**
+- Solution: Do a clean rebuild:
+  ```bash
+  cd build_web
+  rm -rf *
+  emcmake cmake -DCMAKE_BUILD_TYPE=Release -S ..
+  make
+  ```
+
+**Issue: Game won't load or shows console errors**
+- Check browser console (F12) for error messages
+- Verify all assets are present in the `assets/` folder
+- Try hard-refreshing the page (Ctrl+Shift+R or Cmd+Shift+R)
+
+#### What Gets Built
+
+- `game.html` - Main game page
+- `game.wasm` - Compiled game code
+- `game.js` - Emscripten runtime
+- `game.data` - Preloaded assets (images, audio)
+
+All assets from the `assets/` folder are automatically included in the web build!
+
 ## Controls
 
 - **A / Left Arrow** - Move left

@@ -123,6 +123,7 @@ if(BUILD_FOR_WEB)
         "SHELL:-s FORCE_FILESYSTEM=1"
         "SHELL:-s TOTAL_MEMORY=256MB"
         "SHELL:-s ALLOW_MEMORY_GROWTH=1"
+        "SHELL:-s ASYNCIFY"
         "SHELL:--shell-file ${CMAKE_CURRENT_SOURCE_DIR}/src/minshell.html"
     )
     
